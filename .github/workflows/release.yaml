@@ -37,5 +37,6 @@ jobs:
           version: v1.6.1 # renovate: datasource=github-releases depName=chart-releaser packageName=helm/chart-releaser
         env:
           CR_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          CR_RELEASE_NAME_TEMPLATE: "{{ .Version }}"
           #CR_GENERATE_RELEASE_NOTES: true
           #CR_SKIP_EXISTING: true
