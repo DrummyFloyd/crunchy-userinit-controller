@@ -7,7 +7,6 @@ name: Build and Push
 #    branches: main
 #    types: completed
 
-
 on:
   push:
     branches:
@@ -72,7 +71,7 @@ jobs:
           cache-to: type=gha,mode=max
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           build-args: |
             BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
             GIT_HASH=${{ steps.vars.outputs.git-hash }}
