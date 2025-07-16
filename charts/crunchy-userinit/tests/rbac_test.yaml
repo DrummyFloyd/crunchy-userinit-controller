@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: RBAC
+templates:
+  - rbac.yaml
+release:
+  name: test
+  namespace: test-ns
+chart:
+  version: 0.0.0
+  appVersion: 0.0.0
+set:
+  image:
+    repository: ghcr.io/drummyfloyd/crunchy-userinit-controller
+    tag: 0.0.0
+tests:
+  - it: should match snapshot with defautl
+    asserts:
+      - matchSnapshot: {}

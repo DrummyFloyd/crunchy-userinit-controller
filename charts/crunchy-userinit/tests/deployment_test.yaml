@@ -1,0 +1,334 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: Deployment
+templates:
+  - deployment.yaml
+release:
+  name: test
+  namespace: test-ns
+chart:
+  version: 0.0.0
+  appVersion: 0.0.0
+set:
+  image:
+    repository: ghcr.io/drummyfloyd/crunchy-userinit-controller
+    tag: 0.0.0
+tests:
+  - it: should match snapshot with default values
+    asserts:
+      - matchSnapshot: {}
+
+  - it: should have correct metadata and labels
+    asserts:
+      - equal:
+          path: metadata.name
+          value: test-crunchy-userinit-controller
+      - equal:
+          path: metadata.labels
+          value:
+            helm.sh/chart: crunchy-userinit-controller-0.0.0
+            app.kubernetes.io/name: crunchy-userinit-controller
+            app.kubernetes.io/instance: test
+            app.kubernetes.io/version: "0.0.0"
+            app.kubernetes.io/managed-by: Helm
+
+  - it: should use Recreate strategy
+    asserts:
+      - equal:
+          path: spec.strategy.type
+          value: Recreate
+
+  - it: should have correct selector labels
+    asserts:
+      - equal:
+          path: spec.selector.matchLabels
+          value:
+            app.kubernetes.io/name: crunchy-userinit-controller
+            app.kubernetes.io/instance: test
+
+  - it: should have CRUI_WATCH_NAMESPACE environment variable
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CRUI_WATCH_NAMESPACE
+            value: test-ns
+
+  - it: should include extra environment variables
+    set:
+      extraEnv:
+        - name: CUSTOM_VAR
+          value: custom-value
+        - name: SECRET_VAR
+          valueFrom:
+            secretKeyRef:
+              name: my-secret
+              key: password
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: CUSTOM_VAR
+            value: custom-value
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content:
+            name: SECRET_VAR
+            valueFrom:
+              secretKeyRef:
+                name: my-secret
+                key: password
+
+  - it: should have liveness probe
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            httpGet:
+              path: /healthz
+              port: 8080
+
+  - it: should use custom image tag when specified
+    set:
+      image:
+        tag: v1.2.3
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: ghcr.io/drummyfloyd/crunchy-userinit-controller:v1.2.3
+
+  - it: should use chart appVersion when image tag not specified
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: ghcr.io/drummyfloyd/crunchy-userinit-controller:0.0.0
+
+  - it: should set custom image pull policy
+    set:
+      image:
+        pullPolicy: Always
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: Always
+
+  - it: should include pod annotations
+    set:
+      podAnnotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+    asserts:
+      - equal:
+          path: spec.template.metadata.annotations
+          value:
+            prometheus.io/scrape: "true"
+            prometheus.io/port: "8080"
+
+  - it: should include pod labels
+    set:
+      podLabels:
+        environment: production
+        team: platform
+    asserts:
+      - equal:
+          path: spec.template.metadata.labels.environment
+          value: production
+      - equal:
+          path: spec.template.metadata.labels.team
+          value: platform
+
+  - it: should include image pull secrets
+    set:
+      imagePullSecrets:
+        - name: regcred
+        - name: another-secret
+    asserts:
+      - equal:
+          path: spec.template.spec.imagePullSecrets
+          value:
+            - name: regcred
+            - name: another-secret
+
+  - it: should set custom service account
+    set:
+      serviceAccount:
+        create: false
+        name: custom-sa
+    asserts:
+      - equal:
+          path: spec.template.spec.serviceAccountName
+          value: custom-sa
+
+  - it: should include pod security context
+    set:
+      podSecurityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 2000
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext
+          value:
+            runAsNonRoot: true
+            runAsUser: 1001
+            fsGroup: 2000
+
+  - it: should include container security context
+    set:
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].securityContext
+          value:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+
+  - it: should include resource limits and requests
+    set:
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].resources
+          value:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+
+  - it: should include volume mounts
+    set:
+      volumeMounts:
+        - name: config
+          mountPath: /etc/config
+          readOnly: true
+        - name: data
+          mountPath: /data
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts
+          value:
+            - name: config
+              mountPath: /etc/config
+              readOnly: true
+            - name: data
+              mountPath: /data
+
+  - it: should include volumes
+    set:
+      volumes:
+        - name: config
+          configMap:
+            name: app-config
+        - name: data
+          emptyDir: {}
+    asserts:
+      - equal:
+          path: spec.template.spec.volumes
+          value:
+            - name: config
+              configMap:
+                name: app-config
+            - name: data
+              emptyDir: {}
+
+  - it: should include node selector
+    set:
+      nodeSelector:
+        kubernetes.io/arch: amd64
+        node-type: compute
+    asserts:
+      - equal:
+          path: spec.template.spec.nodeSelector
+          value:
+            kubernetes.io/arch: amd64
+            node-type: compute
+
+  - it: should include affinity rules
+    set:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/arch
+                    operator: In
+                    values:
+                      - amd64
+    asserts:
+      - equal:
+          path: spec.template.spec.affinity
+          value:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                  - matchExpressions:
+                      - key: kubernetes.io/arch
+                        operator: In
+                        values:
+                          - amd64
+
+  - it: should include tolerations
+    set:
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+        - key: dedicated
+          operator: Equal
+          value: apps
+          effect: NoSchedule
+    asserts:
+      - equal:
+          path: spec.template.spec.tolerations
+          value:
+            - key: node-role.kubernetes.io/master
+              operator: Exists
+              effect: NoSchedule
+            - key: dedicated
+              operator: Equal
+              value: apps
+              effect: NoSchedule
+
+  - it: should not include optional fields when not set
+    asserts:
+      - notExists:
+          path: spec.template.metadata.annotations
+      - notExists:
+          path: spec.template.spec.imagePullSecrets
+      - notExists:
+          path: spec.template.spec.containers[0].volumeMounts
+      - notExists:
+          path: spec.template.spec.volumes
+      - notExists:
+          path: spec.template.spec.nodeSelector
+      - notExists:
+          path: spec.template.spec.affinity
+      - notExists:
+          path: spec.template.spec.tolerations
+
+  - it: should set replica count to 1
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 1
+
+  - it: should use correct container name from chart
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].name
+          value: crunchy-userinit-controller
