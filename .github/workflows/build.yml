@@ -15,8 +15,6 @@ on:
       - "src/**"
       - "Dockerfile"
       - "requirements.txt"
-    tags:
-      - "*" # Trigger on any tag
   workflow_dispatch:
 
 jobs:
@@ -76,58 +74,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           build-args: |
             BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
-            GIT_HASH=${{ steps.vars.outputs.git-hash }}
-
-  build-tag-image:
-    # Only run this job when a tag is pushed
-    if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Check out the repository
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract tag version
-        id: tag
-        run: |
-          TAG_VERSION=${GITHUB_REF#refs/tags/}
-          echo "version=${TAG_VERSION}" >> "$GITHUB_OUTPUT"
-          echo "image-name=:${TAG_VERSION}" >> "$GITHUB_OUTPUT"
-
-      - name: Setup variables
-        id: vars
-        run: |
-          build_date=$(date +%Y%m%d%H%M)
-          echo "build-date=${build_date}" >> "$GITHUB_OUTPUT"
-          echo "git-hash=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
-
-      - name: Debug tag build
-        run: |
-          echo "Tag version: ${{ steps.tag.outputs.version }}"
-          echo "Full image: ghcr.io/${{ github.repository }}"
-
-      - name: Build and push tag image
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          context: .
-          file: ./Dockerfile
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          tags: ghcr.io/${{ github.repository }}:{{ steps.tag.outputs.version }}
-          platforms: linux/amd64,linux/arm64
-          build-args: |
-            BUILD_DATE=${{ steps.vars.outputs.build-date }}
             GIT_HASH=${{ steps.vars.outputs.git-hash }}
