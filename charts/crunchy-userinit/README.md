@@ -18,7 +18,7 @@ Installs crunchy-userinit-controller
 | extraEnv | list | `[]` | Additional environment variables to apply to the main pod |
 | fullnameOverride | string | `""` | String to fully override crunchy-userinit-controller.fullname template |
 | image.pullPolicy | string | `"IfNotPresent"` | Container image pull policy |
-| image.repository | string | `"ghcr.io/ramblurr/crunchy-userinit-controller"` | Container image repository |
+| image.repository | string | `"ghcr.io/drummyfloyd/crunchy-userinit-controller"` | Container image repository |
 | image.tag | string | `""` | Container image tag (immutable tags are recommended) |
 | imagePullSecrets | list | `[]` | Specify docker-registry secret names as an array |
 | nameOverride | string | `""` | String to partially override crunchy-userinit-controller.fullname template |

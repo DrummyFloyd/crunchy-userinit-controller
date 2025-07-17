@@ -3,7 +3,7 @@ replicaCount: 1
 
 image:
   # -- Container image repository
-  repository: ghcr.io/ramblurr/crunchy-userinit-controller
+  repository: ghcr.io/drummyfloyd/crunchy-userinit-controller
   # -- Container image pull policy
   pullPolicy: IfNotPresent
   # -- Container image tag (immutable tags are recommended)
