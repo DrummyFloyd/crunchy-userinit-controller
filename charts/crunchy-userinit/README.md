@@ -1,6 +1,6 @@
 # crunchy-userinit-controller
 
-![Version: 0.0.4](https://img.shields.io/badge/Version-0.0.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
+![Version: 0.0.5](https://img.shields.io/badge/Version-0.0.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.5](https://img.shields.io/badge/AppVersion-0.0.5-informational?style=flat-square)
 
 Installs crunchy-userinit-controller
 
@@ -19,7 +19,7 @@ Installs crunchy-userinit-controller
 | fullnameOverride | string | `""` | String to fully override crunchy-userinit-controller.fullname template |
 | image.pullPolicy | string | `"IfNotPresent"` | Container image pull policy |
 | image.repository | string | `"ghcr.io/ramblurr/crunchy-userinit-controller"` | Container image repository |
-| image.tag | string | `"main@sha256:0970b9b9c919bd87dcb72d9d5b940faf2b128128899a132ec963e2860595f4a6"` | Container image tag (immutable tags are recommended) |
+| image.tag | string | `""` | Container image tag (immutable tags are recommended) |
 | imagePullSecrets | list | `[]` | Specify docker-registry secret names as an array |
 | nameOverride | string | `""` | String to partially override crunchy-userinit-controller.fullname template |
 | nodeSelector | object | `{}` | Node labels for pod assignment |

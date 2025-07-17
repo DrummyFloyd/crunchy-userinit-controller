@@ -3,8 +3,8 @@ apiVersion: v2
 name: crunchy-userinit-controller
 description: Installs crunchy-userinit-controller
 type: application
-version: 0.0.4
-appVersion: "0.0.1"
+version: 0.0.5
+appVersion: "0.0.5"
 maintainers:
   - name: ramblurr
     email: unnamedrambler@gmail.com
