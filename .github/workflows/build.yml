@@ -104,7 +104,7 @@ jobs:
         run: |
           TAG_VERSION=${GITHUB_REF#refs/tags/}
           echo "version=${TAG_VERSION}" >> "$GITHUB_OUTPUT"
-          echo "image-name=image-docker:${TAG_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "image-name=:${TAG_VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Setup variables
         id: vars
@@ -116,8 +116,7 @@ jobs:
       - name: Debug tag build
         run: |
           echo "Tag version: ${{ steps.tag.outputs.version }}"
-          echo "Image name: ${{ steps.tag.outputs.image-name }}"
-          echo "Full image: ghcr.io/${{ github.repository_owner }}/${{ steps.tag.outputs.image-name }}"
+          echo "Full image: ghcr.io/${{ github.repository }}"
 
       - name: Build and push tag image
         uses: docker/build-push-action@v4
@@ -127,7 +126,7 @@ jobs:
           file: ./Dockerfile
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ghcr.io/${{ github.repository_owner }}/${{ steps.tag.outputs.image-name }}
+          tags: ghcr.io/${{ github.repository }}:{{ steps.tag.outputs.version }}
           platforms: linux/amd64,linux/arm64
           build-args: |
             BUILD_DATE=${{ steps.vars.outputs.build-date }}
