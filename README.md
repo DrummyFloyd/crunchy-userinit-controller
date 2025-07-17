@@ -33,7 +33,7 @@ When a pguser secret is detected it will open up the secret, pull out the userna
 ## How?
 
 ```
-helm repo add crunchy-userinit-controller https://ramblurr.github.io/crunchy-userinit-controller
+helm repo add crunchy-userinit-controller https://drummyfloyd.github.io/crunchy-userinit-controller
 helm repo update
 helm install -n YOUR_DB_NS crunchy-userinit-controller/crunchy-userinit-controller
 ```
