@@ -1,31 +1,37 @@
-FROM python:3.12
+# Use a Python image with uv pre-installed
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
-# Define build arguments to fix the undefined variable warnings
-ARG GIT_HASH=unknown
-ARG BUILD_DATE=unknown
+WORKDIR /app
 
-# Add cross-compilation support
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-ARG TARGETOS
-ARG TARGETARCH
+# Enable bytecode compilation
+ENV UV_COMPILE_BYTECODE=1
 
-# Copy source code and requirements
-COPY ./src /src
-COPY ./requirements.txt /src/requirements.txt
+# Copy from the cache instead of linking since it's a mounted volume
+ENV UV_LINK_MODE=copy
 
-# Install Python dependencies
-RUN pip install -r /src/requirements.txt
+# Install the project's dependencies using the lockfile and settings
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-dev
 
-# Create user and set permissions
-RUN adduser --system --no-create-home controller
-RUN chmod +x /src/entrypoint.sh
+# Then, add the rest of the project source code and install it
+# Installing separately from its dependencies allows optimal layer caching
+COPY ./pyproject.toml /app
+COPY ./uv.lock /app
+COPY ./src /app
 
-# Switch to non-root user
-USER controller
+RUN ls -l /app
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --locked --no-dev
 
-# Set the entrypoint
-CMD ["/src/entrypoint.sh"]
+# Place executables in the environment at the front of the path
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Reset the entrypoint, don't invoke `uv`
+ENTRYPOINT []
+
+CMD ["/app/entrypoint.sh"]
 
 # Add metadata labels
 LABEL org.opencontainers.image.version=${GIT_HASH}

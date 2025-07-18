@@ -1,3 +1,0 @@
-asyncpg==0.29.0
-kopf==1.37.1
-kubernetes-asyncio==29.0.0

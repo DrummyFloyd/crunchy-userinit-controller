@@ -13,7 +13,7 @@ check_vars()
 check_vars CRUI_WATCH_NAMESPACE
 
 if [ "${CRUI_DEBUG}" = "true" ]; then
-  kopf run --liveness=http://0.0.0.0:8080/healthz  --namespace "${CRUI_WATCH_NAMESPACE}" /src/userinit.py --verbose
+  kopf run --liveness=http://0.0.0.0:8080/healthz --namespace "${CRUI_WATCH_NAMESPACE}" userinit.py --verbose
 else
-  kopf run --liveness=http://0.0.0.0:8080/healthz  --namespace "${CRUI_WATCH_NAMESPACE}" /src/userinit.py
+  kopf run --liveness=http://0.0.0.0:8080/healthz --namespace "${CRUI_WATCH_NAMESPACE}" userinit.py
 fi

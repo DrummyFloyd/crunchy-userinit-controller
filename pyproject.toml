@@ -1,0 +1,11 @@
+[project]
+name = "crunchy-userinit-controller"
+version = "0.0.5"
+description = "A simple k8s controller to assist in creating users for the crunchydata postgres operator"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "asyncpg==0.29",
+  "kopf==1.37.1",
+  "kubernetes-asyncio==29.0.0",
+]
