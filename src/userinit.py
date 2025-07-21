@@ -85,11 +85,11 @@ async def on_pguser_secret_created(body, **kwargs):
     data = secret.get("data")
     dbname = decode_value(data.get("dbname"))
     role_name = decode_value(data.get("user"))
-    err_msg = (f"Could not parse %s from secret_name={secret_name}",)
+    err_msg = (f"Could not parse %s from secret_name={secret_name}")
     if not dbname:
-        raise kopf.TemporaryError(err_msg.format("dbname"), delay=30)
+        raise kopf.TemporaryError(err_msg % "dbname", delay=30)
     if not role_name:
-        raise kopf.TemporaryError(err_msg.format("role_name"), delay=30)
+        raise kopf.TemporaryError(err_msg % "role_name", delay=30)
 
     if role_name == superuser:
         logger.info(f"skipping {role_name} as it is the superuser")
