@@ -4,8 +4,106 @@ version = "0.0.5"
 description = "A simple k8s controller to assist in creating users for the crunchydata postgres operator"
 readme = "README.md"
 requires-python = ">=3.12"
+classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+
 dependencies = [
   "asyncpg==0.29",
   "kopf==1.37.1",
-  "kubernetes-asyncio==29.0.0",
+  "kubernetes-asyncio==29",
 ]
+
+
+
+urls.Documentation = "https://github.com/DrummyFloyd/crunchy-userinit-controller#readme"
+urls.Homepage = "https://github.com/DrummyFloyd/crunchy-userinit-controller"
+urls.Issues = "https://github.com/DrummyFloyd/crunchy-userinit-controller/issues"
+urls.Repository = "https://github.com/DrummyFloyd/crunchy-userinit-controller.git"
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-asyncio>=1.1.0",
+    "pytest-cov>=6.2.1",
+]
+[project.optional-dependencies]
+tests = [
+    "pytest>=8.4.1",
+]
+
+[tool.pytest.ini_options]
+# Test discovery
+testpaths = [ "tests" ]
+python_files = [ "test_*.py" ]
+python_classes = [ "Test*" ]
+python_functions = [ "test_*" ]
+
+# Asyncio configuration
+asyncio_mode = "auto"
+
+# Output configuration
+addopts = [
+  "-v",
+  "--tb=short",
+  "--strict-markers",
+  "--disable-warnings",
+  "--color=yes",
+  "--durations=10",
+  "--cov=src",
+  "--cov-report=term-missing",
+  "--cov-report=html",
+  "--cov-fail-under=80",
+]
+
+# Markers
+markers = [
+  "unit: Unit tests",
+  "integration: Integration tests",
+  "slow: Slow running tests",
+  "requires_k8s: Tests that require Kubernetes cluster",
+]
+
+# Minimum version
+minversion = "6.0"
+
+# Test timeout (in seconds)
+timeout = 300
+
+# Filter warnings
+filterwarnings = [
+  "ignore::DeprecationWarning",
+  "ignore::PendingDeprecationWarning",
+]
+
+[tool.coverage.run]
+source = [ "src" ]
+data_file = ".coverage/.coverage"
+omit = [
+  "tests/*",
+  "*/conftest.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "def __repr__",
+  "if self.debug:",
+  "if settings.DEBUG",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if 0:",
+  "if __name__ == .__main__.:",
+  "class .*\\bProtocol\\):",
+  "@(abc\\.)?abstractmethod",
+]
+[tool.coverage.html]
+directory = ".coverage/htmlcov"
+
+[tool.coverage.xml]
+output = ".coverage/coverage.xml"
+
+[tool.coverage.json]
+output = ".coverage/coverage.json"

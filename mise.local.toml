@@ -2,3 +2,19 @@
 helm-docs = "1.14.2"
 task = "3.44.0"
 uv = "0.7.20"
+
+
+[tasks.test]
+description = "Run the test suite"
+run = "uv run pytest"
+
+[tasks.coverage]
+description = "Run the test suite with coverage"
+run = "uv run pytest --cov=src --cov-report=term-missing --cov"
+
+[tasks.coverage-ui]
+description = "Run the test suite with coverage with html view"
+run = [
+  "uv run pytest --cov=src --cov-report=term-missing --cov",
+  "python -m webbrowser htmlcov/index.html",
+]
