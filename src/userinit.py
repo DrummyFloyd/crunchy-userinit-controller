@@ -101,7 +101,7 @@ async def on_pguser_secret_created(body, **kwargs):
         await change_owner(conn, dbname, role_name)
     except Exception as e:
         raise kopf.TemporaryError(
-            f"Failed to change the owner of the database: db={database_name} new_owner={role_name} e={e}",
+            f"Failed to change the owner of the database: db={dbname} new_owner={role_name} e={e}",
             delay=60,
         )
 
