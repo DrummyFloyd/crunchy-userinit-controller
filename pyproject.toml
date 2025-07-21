@@ -53,6 +53,7 @@ addopts = [
   "--disable-warnings",
   "--color=yes",
   "--durations=10",
+  "--cov",
   "--cov=src",
   "--cov-branch",
   "--cov-report=term-missing",
@@ -104,9 +105,3 @@ exclude_lines = [
 ]
 [tool.coverage.html]
 directory = ".coverage/htmlcov"
-
-[tool.coverage.xml]
-output = ".coverage/coverage.xml"
-
-[tool.coverage.json]
-output = ".coverage/coverage.json"
