@@ -41,6 +41,7 @@ python_files = [ "test_*.py" ]
 python_classes = [ "Test*" ]
 python_functions = [ "test_*" ]
 
+
 # Asyncio configuration
 asyncio_mode = "auto"
 
@@ -57,6 +58,7 @@ addopts = [
   "--cov-report=term-missing",
   "--cov-report=html",
   "--cov-fail-under=80",
+  "--junitxml=.coverage/junit.xml",
 ]
 
 # Markers
