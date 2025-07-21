@@ -1,0 +1,47 @@
+---
+name: Unittest & Coverage
+
+on:
+  pull_request:
+    # types: [review_requested, ready_for_review]
+    paths:
+      - "src/**"
+      - tests/**
+      - pyproject.toml
+      - .python-version
+      - "uv.lock"
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  checks: write
+  pull-requests: write
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+        with:
+          fetch-depth: 0
+      - uses: jdx/mise-action@v2
+        with:
+          version: 2025.7.2
+          install: true
+          cache: false
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run pytest and coverage
+        run: |
+          mise run coverage | tee pytest-coverage.txt
+
+      - name: Pytest coverage comment
+        uses: MishaKav/pytest-coverage-comment@main
+        with:
+          junitxml-path: .coverage/junit.xml
+          title: Coverage Report
+          hide-report: false
+
