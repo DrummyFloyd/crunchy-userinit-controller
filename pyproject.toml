@@ -53,6 +53,7 @@ addopts = [
   "--color=yes",
   "--durations=10",
   "--cov=src",
+  "--cov-branch",
   "--cov-report=term-missing",
   "--cov-report=html",
   "--cov-fail-under=80",
