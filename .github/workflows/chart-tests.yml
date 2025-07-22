@@ -1,5 +1,5 @@
 ---
-name: Lint and Test Charts
+name: (Chart) Lint and Test
 
 on:
   pull_request:
@@ -10,8 +10,6 @@ on:
       - main
     paths:
       - "charts/**"
-      - ".github/**"
-  workflow_dispatch:
 
 jobs:
   generate:

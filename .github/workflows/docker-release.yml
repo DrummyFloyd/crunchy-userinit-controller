@@ -1,10 +1,10 @@
 ---
-name: release
+name: (Docker) Release
 
 on:
   push:
     tags:
-      - "*" # Trigger on any tag
+      - "v*"
 
 jobs:
   build:
