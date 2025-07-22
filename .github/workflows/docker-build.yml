@@ -1,5 +1,5 @@
 ---
-name: Docker Build and Push
+name: (Docker) Build and Push
 
 on:
   push:
@@ -16,7 +16,6 @@ on:
       - "Dockerfile"
       - "pyproject.toml"
       - "uv.lock"
-  workflow_dispatch:
 
 jobs:
   build-and-push:
