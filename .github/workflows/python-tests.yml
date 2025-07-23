@@ -13,6 +13,12 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "src/**"
+      - tests/**
+      - pyproject.toml
+      - .python-version
+      - "uv.lock"
 
 permissions:
   contents: write
