@@ -8,10 +8,6 @@
     {
       "type": "fix",
       "section": "Bug Fixes"
-    },
-    {
-      "type": "chore",
-      "section": "Chores"
     }
   ],
   "sequential-calls": true,
