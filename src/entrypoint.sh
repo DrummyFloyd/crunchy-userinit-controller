@@ -14,7 +14,10 @@ check_vars() {
 
 check_vars CRUI_WATCH_NAMESPACE
 
-kopf_cmd="kopf run --liveness=http://0.0.0.0:8080/healthz --namespace ${CRUI_WATCH_NAMESPACE} userinit/userinit.py"
+kopf_cmd="kopf run --liveness=http://0.0.0.0:8080/healthz --namespace ${CRUI_WATCH_NAMESPACE} -m userinit.userinit"
 [ "${CRUI_DEBUG}" = "true" ] && kopf_cmd+=" --verbose"
+
+# FIX: Ensure that the /app directory is in the PYTHONPATH avoid kopf import errors
+export PYTHONPATH="/app:${PYTHONPATH}"
 
 exec $kopf_cmd
