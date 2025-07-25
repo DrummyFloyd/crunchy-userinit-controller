@@ -8,8 +8,15 @@ from .config import APP_NAME, LABEL_SUPERUSER
 class PgUserSecret:
     """Represents a PostgreSQL user secret from Kubernetes"""
 
-    def __init__(self, secret_name: str, cluster_name: str, cluster_ns: str,
-                 superuser: str, dbname: str, role_name: str):
+    def __init__(
+        self,
+        secret_name: str,
+        cluster_name: str,
+        cluster_ns: str,
+        superuser: str,
+        dbname: str,
+        role_name: str,
+    ):
         self.secret_name = secret_name
         self.cluster_name = cluster_name
         self.cluster_ns = cluster_ns
@@ -18,11 +25,13 @@ class PgUserSecret:
         self.role_name = role_name
 
     @classmethod
-    def from_k8s_secret(cls, secret_body) -> 'PgUserSecret':
+    def from_k8s_secret(cls, secret_body) -> "PgUserSecret":
         """Create PgUserSecret from Kubernetes secret body"""
         secret = secret_body
         secret_name = secret.metadata.name
-        cluster_name = secret.metadata.labels["postgres-operator.crunchydata.com/cluster"]
+        cluster_name = secret.metadata.labels[
+            "postgres-operator.crunchydata.com/cluster"
+        ]
         cluster_ns = secret.metadata.namespace
         superuser = secret.metadata.labels.get(LABEL_SUPERUSER)
 
@@ -46,7 +55,7 @@ class PgUserSecret:
         return cls(secret_name, cluster_name, cluster_ns, superuser, dbname, role_name)
 
 
-def decode_value(v: str) -> str|None :
+def decode_value(v: str) -> str | None:
     """Decode base64 value from Kubernetes secret"""
     if not v:
         return None

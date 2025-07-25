@@ -55,7 +55,9 @@ class TestPgUserSecret:
 
     def test_from_k8s_secret_missing_superuser_label(self, valid_secret_body):
         # Test when superuser label is missing
-        del valid_secret_body.metadata.labels["crunchy-userinit.ramblurr.github.com/superuser"]
+        del valid_secret_body.metadata.labels[
+            "crunchy-userinit.ramblurr.github.com/superuser"
+        ]
 
         with pytest.raises(kopf.TemporaryError, match="superuser label not found"):
             PgUserSecret.from_k8s_secret(valid_secret_body)
@@ -77,9 +79,7 @@ class TestPgUserSecret:
     def test_custom_secret_creation(self, mock_k8s_secret):
         # Example of using the mock_k8s_secret factory
         custom_secret = mock_k8s_secret(
-            cluster_name="custom-cluster",
-            username="customuser",
-            dbname="customdb"
+            cluster_name="custom-cluster", username="customuser", dbname="customdb"
         )
 
         pguser_secret = PgUserSecret.from_k8s_secret(custom_secret)

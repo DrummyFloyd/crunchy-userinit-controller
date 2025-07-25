@@ -11,7 +11,9 @@ class ConnectionManager:
     """Handles database connections"""
 
     @staticmethod
-    async def get_superuser_uri(cluster_ns: str, cluster_name: str, superuser_name: str) -> str:
+    async def get_superuser_uri(
+        cluster_ns: str, cluster_name: str, superuser_name: str
+    ) -> str:
         """
         Get the database URI for the superuser.
 
@@ -55,7 +57,9 @@ class ConnectionManager:
                 return f"postgresql://{user}:{password}@localhost:{port}/{dbname}"
 
     @staticmethod
-    async def open_cluster_connection(cluster_ns: str, cluster_name: str, superuser_name: str) -> asyncpg.Connection:
+    async def open_cluster_connection(
+        cluster_ns: str, cluster_name: str, superuser_name: str
+    ) -> asyncpg.Connection:
         """Open a database connection using superuser credentials.
 
         Attempts to establish a connection to the PostgreSQL database using the
@@ -73,7 +77,9 @@ class ConnectionManager:
             kopf.TemporaryError: If the connection cannot be established,
                 will retry after 10 seconds
         """
-        uri = await ConnectionManager.get_superuser_uri(cluster_ns, cluster_name, superuser_name)
+        uri = await ConnectionManager.get_superuser_uri(
+            cluster_ns, cluster_name, superuser_name
+        )
         try:
             return await asyncpg.connect(uri)
         except Exception as e:

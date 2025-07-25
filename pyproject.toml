@@ -9,20 +9,13 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
 ]
+dependencies = ["asyncpg==0.29", "kopf==1.37.1", "kubernetes-asyncio==29"]
 
-dependencies = [
-  "asyncpg==0.29",
-  "kopf==1.37.1",
-  "kubernetes-asyncio==29",
-]
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
-urls.Documentation = "https://github.com/DrummyFloyd/crunchy-userinit-controller#readme"
-urls.Homepage = "https://github.com/DrummyFloyd/crunchy-userinit-controller"
-urls.Issues = "https://github.com/DrummyFloyd/crunchy-userinit-controller/issues"
-urls.Repository = "https://github.com/DrummyFloyd/crunchy-userinit-controller.git"
+[project.urls]
+Documentation = "https://github.com/DrummyFloyd/crunchy-userinit-controller#readme"
+Homepage = "https://github.com/DrummyFloyd/crunchy-userinit-controller"
+Issues = "https://github.com/DrummyFloyd/crunchy-userinit-controller/issues"
+Repository = "https://github.com/DrummyFloyd/crunchy-userinit-controller.git"
 
 [dependency-groups]
   dev = [
@@ -38,17 +31,17 @@ test = [
     "pytest-cov>=6.2.1",
 ]
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.pytest.ini_options]
 # Test discovery
-testpaths = [ "tests" ]
-python_files = [ "test_*.py" ]
-python_classes = [ "Test*" ]
-python_functions = [ "test_*" ]
-
-
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 # Asyncio configuration
 asyncio_mode = "auto"
-
 # Output configuration
 addopts = [
   "-v",
@@ -65,7 +58,6 @@ addopts = [
   "--cov-fail-under=80",
   "--junitxml=.coverage/junit.xml",
 ]
-
 # Markers
 markers = [
   "unit: Unit tests",
@@ -73,13 +65,10 @@ markers = [
   "slow: Slow running tests",
   "requires_k8s: Tests that require Kubernetes cluster",
 ]
-
 # Minimum version
 minversion = "6.0"
-
 # Test timeout (in seconds)
 timeout = 300
-
 # Filter warnings
 filterwarnings = [
   "ignore::DeprecationWarning",
@@ -87,12 +76,9 @@ filterwarnings = [
 ]
 
 [tool.coverage.run]
-source = [ "src" ]
+source = ["src"]
 data_file = ".coverage/.coverage"
-omit = [
-  "*/tests/*",
-  "*/conftest.py",
-]
+omit = ["*/tests/*", "*/conftest.py"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -107,6 +93,7 @@ exclude_lines = [
   "class .*\\bProtocol\\):",
   "@(abc\\.)?abstractmethod",
 ]
+
 [tool.coverage.html]
 directory = ".coverage/htmlcov"
 

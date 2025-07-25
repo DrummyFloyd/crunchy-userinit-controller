@@ -59,7 +59,7 @@ async def on_pguser_secret_created(body, **kwargs):
         conn = await ConnectionManager.open_cluster_connection(
             pguser_secret.cluster_ns,
             pguser_secret.cluster_name,
-            pguser_secret.superuser
+            pguser_secret.superuser,
         )
 
         try:

@@ -1,6 +1,7 @@
 """
 Test configuration and shared fixtures for crunchy-userinit operator tests.
 """
+
 import pytest
 import asyncio
 import base64
@@ -64,13 +65,14 @@ def event_loop():
 @pytest.fixture
 def mock_k8s_secret():
     """Create a mock Kubernetes secret with typical postgres-operator structure."""
+
     def _create_secret(
         cluster_name: str = "test-cluster",
         namespace: str = "test-namespace",
         username: str = "testuser",
         dbname: str = "testdb",
         superuser: str = "postgres",
-        enabled: bool = True
+        enabled: bool = True,
     ) -> MockSecret:
         labels = {
             "postgres-operator.crunchydata.com/cluster": cluster_name,
@@ -87,7 +89,7 @@ def mock_k8s_secret():
             "metadata": {
                 "name": f"{cluster_name}-pguser-{username}",
                 "namespace": namespace,
-                "labels": labels
+                "labels": labels,
             },
             "data": {
                 "dbname": base64.b64encode(dbname.encode()).decode(),
@@ -98,19 +100,21 @@ def mock_k8s_secret():
                 "uri": base64.b64encode(
                     f"postgresql://{username}:testpass123@test-postgres-host:5432/{dbname}".encode()
                 ).decode(),
-            }
+            },
         }
         return MockSecret(secret_data)
+
     return _create_secret
 
 
 @pytest.fixture
 def mock_superuser_secret():
     """Create a mock superuser secret."""
+
     def _create_superuser_secret(
         cluster_name: str = "test-cluster",
         namespace: str = "test-namespace",
-        superuser: str = "postgres"
+        superuser: str = "postgres",
     ) -> MagicMock:
         secret = MagicMock()
         secret.data = {
@@ -124,28 +128,31 @@ def mock_superuser_secret():
             ).decode(),
         }
         return secret
+
     return _create_superuser_secret
 
 
 @pytest.fixture
 def valid_secret_body():
     """Create a valid secret body for testing - this is the main fixture most tests will use."""
-    return MockSecret({
-        "metadata": {
-            "name": "test-cluster-pguser-testuser",
-            "namespace": "test-ns",
-            "labels": {
-                "postgres-operator.crunchydata.com/cluster": "test-cluster",
-                "postgres-operator.crunchydata.com/role": "pguser",
-                "crunchy-userinit.ramblurr.github.com/enabled": "true",
-                "crunchy-userinit.ramblurr.github.com/superuser": "postgres",
-            }
-        },
-        "data": {
-            "dbname": base64.b64encode(b"testdb").decode(),
-            "user": base64.b64encode(b"testuser").decode(),
+    return MockSecret(
+        {
+            "metadata": {
+                "name": "test-cluster-pguser-testuser",
+                "namespace": "test-ns",
+                "labels": {
+                    "postgres-operator.crunchydata.com/cluster": "test-cluster",
+                    "postgres-operator.crunchydata.com/role": "pguser",
+                    "crunchy-userinit.ramblurr.github.com/enabled": "true",
+                    "crunchy-userinit.ramblurr.github.com/superuser": "postgres",
+                },
+            },
+            "data": {
+                "dbname": base64.b64encode(b"testdb").decode(),
+                "user": base64.b64encode(b"testuser").decode(),
+            },
         }
-    })
+    )
 
 
 @pytest.fixture
@@ -161,9 +168,10 @@ def mock_asyncpg_connection():
 @pytest.fixture
 def mock_kubernetes_client():
     """Create a mock Kubernetes client."""
-    with patch('userinit.connections.client.CoreV1Api') as mock_core_v1, \
-         patch('userinit.connections.ApiClient') as mock_api_client:
-
+    with (
+        patch("userinit.connections.client.CoreV1Api") as mock_core_v1,
+        patch("userinit.connections.ApiClient") as mock_api_client,
+    ):
         mock_v1_instance = AsyncMock()
         mock_core_v1.return_value = mock_v1_instance
 
@@ -178,6 +186,7 @@ def mock_kubernetes_client():
 def setup_logging():
     """Setup logging for tests."""
     import logging
+
     logging.basicConfig(level=logging.DEBUG)
 
 
@@ -185,6 +194,7 @@ def setup_logging():
 def env_vars():
     """Fixture for managing environment variables in tests."""
     import os
+
     original_env = os.environ.copy()
 
     def set_env(**kwargs):
@@ -202,15 +212,9 @@ def env_vars():
 # Pytest configuration
 def pytest_configure(config):
     """Configure pytest with custom markers."""
-    config.addinivalue_line(
-        "markers", "integration: mark test as integration test"
-    )
-    config.addinivalue_line(
-        "markers", "unit: mark test as unit test"
-    )
-    config.addinivalue_line(
-        "markers", "slow: mark test as slow running"
-    )
+    config.addinivalue_line("markers", "integration: mark test as integration test")
+    config.addinivalue_line("markers", "unit: mark test as unit test")
+    config.addinivalue_line("markers", "slow: mark test as slow running")
 
 
 # Custom assertion helpers
@@ -218,9 +222,12 @@ class AssertionHelpers:
     """Custom assertion helpers for tests."""
 
     @staticmethod
-    def assert_temporary_error(exc_info, expected_message: str = None, expected_delay: int = None):
+    def assert_temporary_error(
+        exc_info, expected_message: str = None, expected_delay: int = None
+    ):
         """Assert that a TemporaryError was raised with expected properties."""
         import kopf
+
         assert exc_info.type == kopf.TemporaryError
         if expected_message:
             assert expected_message in str(exc_info.value)
@@ -238,6 +245,7 @@ def assert_helpers():
 @pytest.fixture
 def data_generators():
     """Provide data generators for tests."""
+
     class DataGenerators:
         @staticmethod
         def base64_encode(value: str) -> str:
@@ -249,7 +257,7 @@ def data_generators():
             password: str = "testpass",
             host: str = "localhost",
             port: int = 5432,
-            dbname: str = "testdb"
+            dbname: str = "testdb",
         ) -> str:
             return f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
 

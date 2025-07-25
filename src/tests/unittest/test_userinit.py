@@ -17,9 +17,11 @@ class TestPgUserSecretHandler:
     """Test the main Kopf event handler."""
 
     @pytest.mark.asyncio
-    @patch('userinit.userinit.ConnectionManager.open_cluster_connection')
-    @patch('userinit.userinit.DatabaseManager')
-    async def test_on_pguser_secret_created_success(self, mock_db_manager_class, mock_open_conn, valid_secret_body):
+    @patch("userinit.userinit.ConnectionManager.open_cluster_connection")
+    @patch("userinit.userinit.DatabaseManager")
+    async def test_on_pguser_secret_created_success(
+        self, mock_db_manager_class, mock_open_conn, valid_secret_body
+    ):
         # Test successful execution of the handler
         mock_conn = AsyncMock()
         mock_open_conn.return_value = mock_conn
@@ -35,9 +37,13 @@ class TestPgUserSecretHandler:
         mock_conn.close.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_on_pguser_secret_created_missing_superuser_label(self, valid_secret_body):
+    async def test_on_pguser_secret_created_missing_superuser_label(
+        self, valid_secret_body
+    ):
         # Test when superuser label is missing
-        del valid_secret_body.metadata.labels["crunchy-userinit.ramblurr.github.com/superuser"]
+        del valid_secret_body.metadata.labels[
+            "crunchy-userinit.ramblurr.github.com/superuser"
+        ]
 
         with pytest.raises(kopf.TemporaryError, match="superuser label not found"):
             await on_pguser_secret_created(body=valid_secret_body)
@@ -64,14 +70,16 @@ class TestPgUserSecretHandler:
         valid_secret_body.data["user"] = base64.b64encode(b"postgres").decode()
 
         # Should return without error and without calling change_owner
-        with patch('userinit.userinit.DatabaseManager') as mock_db_manager_class:
+        with patch("userinit.userinit.DatabaseManager") as mock_db_manager_class:
             await on_pguser_secret_created(body=valid_secret_body)
             mock_db_manager_class.assert_not_called()
 
     @pytest.mark.asyncio
-    @patch('userinit.userinit.ConnectionManager.open_cluster_connection')
-    @patch('userinit.userinit.DatabaseManager')
-    async def test_on_pguser_secret_created_change_owner_error(self, mock_db_manager_class, mock_open_conn, valid_secret_body):
+    @patch("userinit.userinit.ConnectionManager.open_cluster_connection")
+    @patch("userinit.userinit.DatabaseManager")
+    async def test_on_pguser_secret_created_change_owner_error(
+        self, mock_db_manager_class, mock_open_conn, valid_secret_body
+    ):
         # Test when change_owner raises an exception
         mock_conn = AsyncMock()
         mock_open_conn.return_value = mock_conn
@@ -87,8 +95,10 @@ class TestPgUserSecretHandler:
         mock_conn.close.assert_called_once()
 
     @pytest.mark.asyncio
-    @patch('userinit.userinit.ConnectionManager.open_cluster_connection')
-    async def test_on_pguser_secret_created_connection_error(self, mock_open_conn, valid_secret_body):
+    @patch("userinit.userinit.ConnectionManager.open_cluster_connection")
+    async def test_on_pguser_secret_created_connection_error(
+        self, mock_open_conn, valid_secret_body
+    ):
         # Test when connection fails
         mock_open_conn.side_effect = kopf.TemporaryError("Connection failed", delay=10)
 
