@@ -25,14 +25,17 @@ urls.Issues = "https://github.com/DrummyFloyd/crunchy-userinit-controller/issues
 urls.Repository = "https://github.com/DrummyFloyd/crunchy-userinit-controller.git"
 
 [dependency-groups]
-dev = [
-    "pytest>=8.4.1",
-    "pytest-asyncio>=1.1.0",
-    "pytest-cov>=6.2.1",
+  dev = [
+  {include-group = "lint"},
+  {include-group = "test"}
 ]
-[project.optional-dependencies]
-tests = [
+lint = [
+    "ruff>=0.12.5",
+]
+test = [
     "pytest>=8.4.1",
+    "pytest-asyncio>=1.1",
+    "pytest-cov>=6.2.1",
 ]
 
 [tool.pytest.ini_options]
@@ -107,5 +110,7 @@ exclude_lines = [
 [tool.coverage.html]
 directory = ".coverage/htmlcov"
 
+[tool.ruff.format]
+[tool.ruff.lint]
 # [tool.basedpyright]
 # typeCheckingMode = "standard"
