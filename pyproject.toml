@@ -16,7 +16,8 @@ dependencies = [
   "kubernetes-asyncio==29",
 ]
 
-
+[tool.setuptools.packages.find]
+where = ["src"]
 
 urls.Documentation = "https://github.com/DrummyFloyd/crunchy-userinit-controller#readme"
 urls.Homepage = "https://github.com/DrummyFloyd/crunchy-userinit-controller"
