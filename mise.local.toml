@@ -39,7 +39,7 @@ run = "helm-docs --chart-search-root charts"
 
 [tasks.helm-test]
 description = "Run helm tests"
-run = "helm unittest charts/crunchy-userinit-controller"
+run = "helm unittest charts/crunchy-userinit"
 
 # Docker Related
 [tasks.docker-build]
