@@ -10,7 +10,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from typing import Any
 
 # Add src directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 class MockSecret:
@@ -161,8 +161,8 @@ def mock_asyncpg_connection():
 @pytest.fixture
 def mock_kubernetes_client():
     """Create a mock Kubernetes client."""
-    with patch('userinit.client.CoreV1Api') as mock_core_v1, \
-         patch('userinit.ApiClient') as mock_api_client:
+    with patch('userinit.connections.client.CoreV1Api') as mock_core_v1, \
+         patch('userinit.connections.ApiClient') as mock_api_client:
 
         mock_v1_instance = AsyncMock()
         mock_core_v1.return_value = mock_v1_instance

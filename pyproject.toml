@@ -86,7 +86,7 @@ filterwarnings = [
 source = [ "src" ]
 data_file = ".coverage/.coverage"
 omit = [
-  "tests/*",
+  "*/tests/*",
   "*/conftest.py",
 ]
 
@@ -105,3 +105,6 @@ exclude_lines = [
 ]
 [tool.coverage.html]
 directory = ".coverage/htmlcov"
+
+# [tool.basedpyright]
+# typeCheckingMode = "standard"

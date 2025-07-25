@@ -21,7 +21,6 @@ COPY ./pyproject.toml /app
 COPY ./uv.lock /app
 COPY ./src /app
 
-RUN ls -l /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev
 
