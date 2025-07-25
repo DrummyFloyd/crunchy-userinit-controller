@@ -26,6 +26,7 @@ Installs crunchy-userinit-controller
 | podAnnotations | object | `{}` | Annotations to add to the pod |
 | podLabels | object | `{}` | Labels to add to the pod |
 | podSecurityContext | object | `{}` | Configure pod security context |
+| rbac.create | bool | `true` | Enabled RBAC on namespace level |
 | replicaCount | int | `1` | Set number of replicas |
 | resources | object | `{}` | Resource limits and requests for the controller pod |
 | securityContext | object | `{}` | Configure container security context |

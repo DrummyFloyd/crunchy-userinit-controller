@@ -9,6 +9,12 @@ image:
   # -- Container image tag (immutable tags are recommended)
   tag: ""
 
+rbac:
+  # TODO: to implement
+  # clusterScope: false
+  # -- Enabled RBAC on namespace level
+  create: true
+
 # -- Additional environment variables to apply to the main pod
 extraEnv: []
 #  - name: DEV_MODE_
@@ -54,8 +60,7 @@ service:
   port: 80
 
 # -- Resource limits and requests for the controller pod
-resources:
-  {}
+resources: {}
   # limits:
   #   cpu: 100m
   #   memory: 128Mi
