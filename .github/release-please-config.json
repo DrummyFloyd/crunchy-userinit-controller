@@ -20,7 +20,7 @@
     },
     ".": {
       "release-type": "python",
-      "exclude-paths": ["charts/"],
+      "exclude-paths": ["charts/", ".github/"],
       "extra-files": [
         {
           "type": "yaml",
