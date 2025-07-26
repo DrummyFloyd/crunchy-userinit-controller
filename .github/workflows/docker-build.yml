@@ -6,13 +6,15 @@ on:
     branches:
       - main
     paths:
-      - "src/**"
+      - "src/userinit/*.py"
+      - "src/entrypoint.sh"
       - "Dockerfile"
       - "pyproject.toml"
       - "uv.lock"
   pull_request:
     paths:
-      - "src/**"
+      - "src/userinit/*.py"
+      - "src/entrypoint.sh"
       - "Dockerfile"
       - "pyproject.toml"
       - "uv.lock"
