@@ -1,0 +1,27 @@
+# Kind cluster configuration for Crunchy Data Operator testing
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: postgres-test
+nodes:
+  - role: control-plane
+    image: &node kindest/node:v1.33.0
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 80
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+      - containerPort: 30432
+        hostPort: 5432
+        protocol: TCP
+  - role: worker
+    image: *node
+  - role: worker
+    image: *node

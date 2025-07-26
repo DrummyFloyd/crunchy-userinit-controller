@@ -4,7 +4,6 @@ helm-docs = "1.14.2"
 kind = "0.29.0"
 uv = "0.7.20"
 
-
 # Python Related
 [tasks.test]
 description = "Run the test suite"
@@ -17,12 +16,6 @@ run = ["uv run pytest", "python -m webbrowser .coverage/htmlcov/index.html"]
 [tasks.lint]
 description = "Run the linter"
 run = "uv run ruff check"
-
-[tasks.local-run]
-description = "Run controller locally"
-run = 'kopf run --namespace {{arg(name="namespace")}} -m userinit.userinit'
-env = {DEV_MODE = "true"}
-dir = "{{cwd}}/src"
 
 [tasks.lint-fix]
 description = "Run the linter with fix"
@@ -45,3 +38,23 @@ run = "helm unittest charts/crunchy-userinit"
 [tasks.docker-build]
 description = "Build the docker image"
 run = "docker build . -t drummyfloyd/crunchy-userinit-controller:dev"
+
+# Local Dev/Testing Related
+[tasks.local-env]
+description = "Deploy the dev environment with kind cluster and crunchydata operator"
+run = "src/tests/integration/deploy.sh -c"
+
+[tasks.local-run]
+description = "Run controller locally"
+run = 'kopf run --namespace {{arg(name="namespace",default="postgres")}} -m userinit.userinit'
+env = {DEV_MODE = "true"}
+dir = "{{cwd}}/src"
+
+[tasks.local-test]
+description = "Run local controller with kind cluster (configured)"
+run = "mise run local-env"
+depends_post = "local-run"
+
+[tasks.local-destroy]
+description = "Destroy the local dev environment"
+run = "src/tests/integration/deploy.sh -d"
