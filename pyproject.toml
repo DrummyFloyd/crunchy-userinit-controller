@@ -95,6 +95,13 @@ exclude_lines = [
 [tool.coverage.html]
 directory = ".coverage/htmlcov"
 
+[tool.pyright]
+reportMissingTypeStubs = false
+reportUnknownMemberType = false
+reportArgumentType = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+
 [tool.ruff.format]
 [tool.ruff.lint]
 # [tool.basedpyright]

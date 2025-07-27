@@ -43,8 +43,7 @@ class ConnectionManager:
                 uri = decode_value(secret_data.get("uri"))
                 if not uri:
                     raise kopf.TemporaryError(
-                        f"Could not parse connection uri for secret_name={secret_name}, "
-                        f"cluster={cluster_name} ns={cluster_ns} superuser={superuser_name}",
+                        f"Could not parse connection uri for secret_name={secret_name}, cluster={cluster_name} ns={cluster_ns} superuser={superuser_name}",
                         delay=30,
                     )
                 return uri
@@ -84,7 +83,6 @@ class ConnectionManager:
             return await asyncpg.connect(uri)
         except Exception as e:
             raise kopf.TemporaryError(
-                f"Cannot connect to the database cluster={cluster_name} "
-                f"ns={cluster_ns} superuser={superuser_name}, e={e}",
+                f"Cannot connect to the database cluster={cluster_name} ns={cluster_ns} superuser={superuser_name}, e={e}",
                 delay=10,
             )

@@ -17,15 +17,15 @@ class PgUserSecret:
         dbname: str,
         role_name: str,
     ):
-        self.secret_name = secret_name
-        self.cluster_name = cluster_name
-        self.cluster_ns = cluster_ns
-        self.superuser = superuser
-        self.dbname = dbname
-        self.role_name = role_name
+        self.secret_name: str = secret_name
+        self.cluster_name: str = cluster_name
+        self.cluster_ns: str = cluster_ns
+        self.superuser: str = superuser
+        self.dbname: str = dbname
+        self.role_name: str = role_name
 
     @classmethod
-    def from_k8s_secret(cls, secret_body) -> "PgUserSecret":
+    def from_k8s_secret(cls, secret_body: kopf.Body) -> "PgUserSecret":
         """Create PgUserSecret from Kubernetes secret body"""
         secret = secret_body
         secret_name = secret.metadata.name
@@ -37,8 +37,7 @@ class PgUserSecret:
 
         if not superuser:
             raise kopf.TemporaryError(
-                f"superuser label not found on cluster, but {APP_NAME} is enabled. "
-                f"Please check the documentation. cluster={cluster_name} ns={cluster_ns}",
+                f"superuser label not found on cluster, but {APP_NAME} is enabled. Please check the documentation. cluster={cluster_name} ns={cluster_ns}",
                 delay=60,
             )
 
