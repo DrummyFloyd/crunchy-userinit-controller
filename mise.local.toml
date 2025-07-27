@@ -12,14 +12,14 @@ PYTHONPATH = "{{cwd}}/src"
 # Python Related
 [tasks.test-unittest]
 description = "Run the test suite"
-run = "uv run pytest -m unit"
+run = "uv run pytest -m unit --no-cov"
 
 [tasks.test-integration]
 description = "Run the integration test suite"
 confirm = "These task will DESTROY previous cluster & create a fresh cluster with the crunchydata operator. Do you want to continue?"
-run = ["src/tests/integration/deploy.sh -c","uv run pytest -m integration"]
+run = ["src/tests/integration/deploy.sh -c","uv run pytest -m integration --no-cov"]
 
-[tasks.test-all]
+[tasks.test-and-coverage]
 description = "Run the test suite and integration tests and coverage report"
 confirm = "These task will DESTROY previous cluster & create a fresh cluster with the crunchydata operator. Do you want to continue?"
 run = ["src/tests/integration/deploy.sh -c ","uv run pytest"]
