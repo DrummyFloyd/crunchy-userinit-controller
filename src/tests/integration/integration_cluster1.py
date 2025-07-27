@@ -53,7 +53,7 @@ class IntegrationWithCluster1:
         assert runner.exit_code == 0
         assert "running in dev mode" in output
         assert (
-            "database owner changed successfully: db=user2_main new_owner=user2 old_owner=postgre"
+            "database owner changed successfully: db=user2_main new_owner=user2 old_owner=postgres"
             in output
         )
         assert (
