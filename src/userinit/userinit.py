@@ -15,7 +15,7 @@ async def configure(settings: kopf.OperatorSettings, **_):
     )
     if DEV_MODE:
         logger.warning("running in dev mode")
-        await config.load_kube_config()
+        _ = await config.load_kube_config()
     else:
         config.load_incluster_config()
 
@@ -38,16 +38,14 @@ async def configure(settings: kopf.OperatorSettings, **_):
     "secret",
     labels=LABELS_MATCH,
 )
-async def on_pguser_secret_created(body, **kwargs):
+async def on_pguser_secret_created(body: kopf.Body, **_):
     """Handle PostgreSQL user secret creation/update events"""
     try:
         # Parse and validate the secret
         pguser_secret = PgUserSecret.from_k8s_secret(body)
 
         logger.info(
-            f"found pguser to manage. secret_name={pguser_secret.secret_name}, "
-            f"cluster_name={pguser_secret.cluster_name} ns={pguser_secret.cluster_ns} "
-            f"superuser={pguser_secret.superuser}"
+            f"found pguser to manage. secret_name={pguser_secret.secret_name}, cluster_name={pguser_secret.cluster_name} ns={pguser_secret.cluster_ns} superuser={pguser_secret.superuser}"
         )
 
         # Skip if this is the superuser itself
@@ -67,8 +65,7 @@ async def on_pguser_secret_created(body, **kwargs):
             await db_manager.change_owner(pguser_secret.dbname, pguser_secret.role_name)
         except Exception as e:
             raise kopf.TemporaryError(
-                f"Failed to change the owner of the database: db={pguser_secret.dbname} "
-                f"new_owner={pguser_secret.role_name} e={e}",
+                f"Failed to change the owner of the database: db={pguser_secret.dbname} new_owner={pguser_secret.role_name} e={e}",
                 delay=60,
             )
         finally:

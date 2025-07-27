@@ -1,8 +1,11 @@
+from typing import final
+
 import asyncpg
 
 from .config import logger
 
 
+@final
 class DatabaseManager:
     """Handles PostgreSQL database operations"""
 
@@ -38,12 +41,10 @@ class DatabaseManager:
             return
         else:
             logger.info(
-                f"changing owner of db={database_name} from old_owner={current_owner} "
-                f"to new_owner={role_name} with '{alter_sql}'"
+                f"changing owner of db={database_name} from old_owner={current_owner} to new_owner={role_name} with '{alter_sql}'"
             )
-            await self.connection.execute(alter_sql)
+            _ = await self.connection.execute(alter_sql)
 
         logger.info(
-            f"database owner changed successfully: db={database_name} "
-            f"new_owner={role_name} old_owner={current_owner}"
+            f"database owner changed successfully: db={database_name} new_owner={role_name} old_owner={current_owner}"
         )
