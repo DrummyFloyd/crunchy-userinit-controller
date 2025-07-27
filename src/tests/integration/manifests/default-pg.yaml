@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: default-pg
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/postgres-operator.crunchydata.com/postgrescluster_v1beta1.json
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: &name default-pg
+  namespace: *name
+  annotations:
+    postgres-operator.crunchydata.com/pgbackrest-restore: "true"
+spec:
+  postgresVersion: 17
+  metadata:
+    labels:
+      crunchy-userinit.ramblurr.github.com/enabled: "true"
+      crunchy-userinit.ramblurr.github.com/superuser: postgres
+  patroni: {}
+  service:
+    type: NodePort
+    nodePort: 30432
+  port: 5432
+  instances:
+    - name: postgres
+      metadata:
+        labels:
+          app.kubernetes.io/name: crunchy-postgres
+      replicas: &replica 1
+      dataVolumeClaimSpec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              postgres-operator.crunchydata.com/cluster: *name
+              postgres-operator.crunchydata.com/data: postgres
+
+  users:
+    # Superuser
+    - name: postgres
+      databases:
+        - postgres
+      options: SUPERUSER
+      password: &password
+        type: AlphaNumeric
+    - name: bar
+      databases:
+        - bar_main
+      password: *password
+    - name: foo
+      databases:
+        - foo_main
+      password: *password
