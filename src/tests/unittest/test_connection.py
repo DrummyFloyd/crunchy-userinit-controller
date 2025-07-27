@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from userinit.connections import ConnectionManager
 
 
+@pytest.mark.unit
 class TestConnectionManager:
     """Test the ConnectionManager class."""
 
@@ -128,7 +129,3 @@ class TestConnectionManager:
             await ConnectionManager.open_cluster_connection(
                 "test-ns", "test-cluster", "postgres"
             )
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])
