@@ -41,10 +41,10 @@ class IntegrationWithCluster1:
                 f"src/tests/integration/deploy.sh --pg {YAML_FILE}",
                 shell=True,
                 check=True,
-                timeout=320,
+                timeout=60,
                 capture_output=True,
             )
-            time.sleep(5)
+            time.sleep(10)
 
         output = runner.output
         print(output)
