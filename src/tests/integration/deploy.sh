@@ -9,8 +9,11 @@ set -euo pipefail
 
 # Configuration
 CRUNCHY_DATA_OPERATOR_VERSION="5.8.2"
+DEPLOY_PG=false         # Flag to control PostgreSQL deployment
+PG_CLUSTER="default-pg" # Default cluster name, can be overridden by command line argument
 CLUSTER_NAME="postgres-test"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+KIND_CONFIG="${SCRIPT_DIR}/kind-cluster-config.yaml"
 MANIFESTS_DIR="${SCRIPT_DIR}/manifests"
 
 # Colors and formatting
@@ -60,7 +63,7 @@ show_banner() {
     ║                                                               ║
     ║        🐘 PostgreSQL Integration Test Environment            ║
     ║                                                               ║
-    ║        Powered by Kind + Crunchy Data Operator               ║
+    ║        Powered by KinD + Crunchy Data Operator               ║
     ║                                                               ║
     ╚═══════════════════════════════════════════════════════════════╝
 EOF
@@ -92,13 +95,13 @@ check_prerequisites() {
     exit 1
   fi
 
-  if [[ ! -f "${MANIFESTS_DIR}/kind-cluster-config.yaml" ]]; then
-    log_error "Kind cluster config not found at: ${MANIFESTS_DIR}/kind-cluster-config.yaml"
+  if [[ ! -f "${KIND_CONFIG}" ]]; then
+    log_error "KinD cluster config not found at: ${KIND_CONFIG}"
     exit 1
   fi
 
-  if [[ ! -f "${MANIFESTS_DIR}/pg-cluster.yaml" ]]; then
-    log_error "PostgreSQL operator manifest not found at: ${MANIFESTS_DIR}/pg-cluster.yaml"
+  if [[ ! -f "${PG_CLUSTER_FILE}" ]]; then
+    log_error "PostgreSQL CRD manifest not found at: ${PG_CLUSTER_FILE}"
     exit 1
   fi
 
@@ -133,22 +136,15 @@ create_kind_cluster() {
   # Check if cluster already exists
   if kind get clusters | grep -q "^${CLUSTER_NAME}$"; then
     log_warning "Cluster '${CLUSTER_NAME}' already exists"
-    read -p "Delete existing cluster and recreate? (y/N): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-      log_info "Deleting existing cluster..."
-      kind delete cluster --name="${CLUSTER_NAME}"
-    else
-      log_info "Using existing cluster"
-      return 0
-    fi
+    log_info "Using existing cluster"
+    return 0
   fi
 
-  log_info "Creating cluster with config: ${MANIFESTS_DIR}/kind-cluster-config.yaml"
-  if kind create cluster --name="${CLUSTER_NAME}" --config="${MANIFESTS_DIR}/kind-cluster-config.yaml"; then
-    log_success "Kind cluster '${CLUSTER_NAME}' created successfully"
+  log_info "Creating cluster with config: ${KIND_CONFIG}"
+  if kind create cluster --name="${CLUSTER_NAME}" --config="${KIND_CONFIG}"; then
+    log_success "KinD cluster '${CLUSTER_NAME}' created successfully"
   else
-    log_error "Failed to create Kind cluster"
+    log_error "Failed to create KinD cluster"
     exit 1
   fi
 }
@@ -158,7 +154,7 @@ install_crunchy_operator() {
 
   log_info "Adding Crunchy Data Helm repository..."
 
-  if helm install pgo \
+  if helm upgrade --install pgo \
     --namespace pgo \
     --create-namespace \
     --version "${CRUNCHY_DATA_OPERATOR_VERSION}" \
@@ -172,22 +168,15 @@ install_crunchy_operator() {
   fi
 }
 
-setup_postgres_namespace() {
-  log_step "4" "Setting up PostgreSQL namespace"
-
-  if kubectl create namespace postgres --dry-run=client -o yaml | kubectl apply -f -; then
-    log_success "PostgreSQL namespace ready"
-  else
-    log_error "Failed to create PostgreSQL namespace"
-    exit 1
-  fi
-}
-
 deploy_postgres_cluster() {
   log_step "5" "Deploying PostgreSQL cluster"
+  if [[ "${DEPLOY_PG}" == false ]]; then
+    log_warning "Skipping PostgreSQL cluster deployment"
+    return 0
+  fi
 
   log_info "Applying PostgreSQL cluster manifest..."
-  if kubectl apply -f "${MANIFESTS_DIR}/pg-cluster.yaml"; then
+  if kubectl apply -f "${PG_CLUSTER_FILE}"; then
     log_success "PostgreSQL cluster deployment initiated"
   else
     log_error "Failed to deploy PostgreSQL cluster"
@@ -197,6 +186,10 @@ deploy_postgres_cluster() {
 
 wait_for_cluster_ready() {
   log_step "6" "Waiting for PostgreSQL cluster to be ready"
+  if [[ "${DEPLOY_PG}" == false ]]; then
+    log_warning "Skipping PostgreSQL cluster ready-check"
+    return 0
+  fi
 
   log_info "This may take a few minutes..."
 
@@ -210,14 +203,14 @@ wait_for_cluster_ready() {
     local pod_names
 
     # Get all pods in postgres namespace
-    pod_names=$(kubectl get pods -n postgres -o name 2>/dev/null | grep -v NAME || echo "")
+    pod_names=$(kubectl get pods -n "${PG_CLUSTER}" -o name 2>/dev/null | grep -v NAME || echo "")
 
     if [[ -n "$pod_names" ]]; then
       while IFS= read -r pod; do
         if [[ -n "$pod" ]]; then
           # Check if all containers in this pod are ready
           local container_statuses
-          container_statuses=$(kubectl get "$pod" -n postgres -o jsonpath='{.status.containerStatuses[*].ready}' 2>/dev/null || echo "")
+          container_statuses=$(kubectl get "$pod" -n "${PG_CLUSTER}" -o jsonpath='{.status.containerStatuses[*].ready}' 2>/dev/null || echo "")
 
           if [[ -n "$container_statuses" ]]; then
             # Check if any container is not ready (contains "false")
@@ -287,7 +280,6 @@ main() {
   check_prerequisites
   create_kind_cluster
   install_crunchy_operator
-  setup_postgres_namespace
   deploy_postgres_cluster
   wait_for_cluster_ready
   show_cluster_info
@@ -303,13 +295,18 @@ Usage: $0 [OPTIONS]
 Options:
     -h, --help              Show this help message
     -c, --clean             Clean up existing cluster before deploying
-    -c, --destroy           Destroy existing cluster and exit
+    -d, --destroy           Destroy existing cluster and exit
     -v, --version VERSION   Set Crunchy Data Operator version (default: ${CRUNCHY_DATA_OPERATOR_VERSION})
+    --pg NAME               Specify the cluster name from tests/integration/manifests (default: ${PG_CLUSTER})
+    --pg-delete NAME        Delete the specified PostgreSQL cluster (default: ${PG_CLUSTER})
 
 Examples:
-    $0                      Deploy with default settings
+    $0                      Deploy with default settings(KinD cluster and ${CRUNCHY_DATA_OPERATOR_VERSION} operator version)
     $0 --clean              Clean existing cluster and deploy fresh
     $0 --version 5.8.1      Deploy with specific operator version
+    $0 --pg cluster1        Deploy PostgreSQL cluster named 'cluster1' (manifest must exist in ${MANIFESTS_DIR})
+    $0 --pg-delete cluster1 Delete PostgreSQL cluster named 'cluster1'
+    $0 -d                   Destroy existing cluster and exit
 
 EOF
 }
@@ -331,6 +328,19 @@ while [[ $# -gt 0 ]]; do
       kind delete cluster --name="${CLUSTER_NAME}" 2>/dev/null || true
       exit 0
       ;;
+    --pg)
+      DEPLY_PG=true
+      PG_CLUSTER="${2:-$PG_CLUSTER}"
+      log_info "Using PostgreSQL cluster '${PG_CLUSTER}'"
+      shift 2
+      ;;
+    --pg-delete)
+      cluster_to_delete="${2:-$PG_CLUSTER}"
+      PG_CLUSTER_FILE="${MANIFESTS_DIR}/${cluster_to_delete}.yaml"
+      log_info "Deleting PostgreSQL cluster '${cluster_to_delete}'"
+      kubectl delete -f "${PG_CLUSTER_FILE}" || true
+      exit 0
+      ;;
     -v | --version)
       CRUNCHY_DATA_OPERATOR_VERSION="$2"
       shift 2
@@ -342,6 +352,9 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
+
+# Set the PostgreSQL cluster manifest file
+PG_CLUSTER_FILE=${MANIFESTS_DIR}/${PG_CLUSTER}.yaml
 
 # Run main function
 main "$@"
