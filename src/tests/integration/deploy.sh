@@ -329,7 +329,7 @@ while [[ $# -gt 0 ]]; do
       exit 0
       ;;
     --pg)
-      DEPLY_PG=true
+      DEPLOY_PG=true
       PG_CLUSTER="${2:-$PG_CLUSTER}"
       log_info "Using PostgreSQL cluster '${PG_CLUSTER}'"
       shift 2
