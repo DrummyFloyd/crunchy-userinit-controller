@@ -5,6 +5,8 @@ kind = "0.29.0"
 kubectl = "1.33.3"
 uv = "0.7.20"
 
+[settings]
+idiomatic_version_file_enable_tools = ["python"]
 
 [env]
 PYTHONPATH = "{{cwd}}/src"
