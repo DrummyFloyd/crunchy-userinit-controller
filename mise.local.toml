@@ -74,4 +74,4 @@ run = "src/tests/integration/deploy.sh -d"
 hide = true
 description = "Run the test suite and integration tests in CI"
 wait_for = "local-env"
-run = "uv run pytest"
+run = ["src/tests/integration/deploy.sh -c ","uv run pytest"]

@@ -40,7 +40,7 @@ jobs:
 
       - name: Run pytest and coverage
         run: |
-          mise run coverage | tee pytest-coverage.txt
+          mise run ci-test | tee pytest-coverage.txt
 
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@main
