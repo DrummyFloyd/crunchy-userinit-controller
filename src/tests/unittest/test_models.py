@@ -9,9 +9,10 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 # Import the models module
-from userinit.models import decode_value, PgUserSecret
+from userinit.models import PgUserSecret, decode_value
 
 
+@pytest.mark.unit
 class TestDecodeValue:
     """Test the decode_value utility function."""
 
@@ -39,6 +40,7 @@ class TestDecodeValue:
         assert result == unicode_text
 
 
+@pytest.mark.unit
 class TestPgUserSecret:
     """Test the PgUserSecret class."""
 
@@ -87,7 +89,3 @@ class TestPgUserSecret:
         assert pguser_secret.secret_name == "custom-cluster-pguser-customuser"
         assert pguser_secret.role_name == "customuser"
         assert pguser_secret.dbname == "customdb"
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

@@ -2,13 +2,13 @@
 Test configuration and shared fixtures for crunchy-userinit operator tests.
 """
 
-import pytest
 import asyncio
 import base64
 import sys
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
-from typing import Any
+
+import pytest
 
 # Add src directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))

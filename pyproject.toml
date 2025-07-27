@@ -37,14 +37,15 @@ where = ["src"]
 [tool.pytest.ini_options]
 # Test discovery
 testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
+python_files = ["test_*.py","integration_*.py"]
+python_classes = ["Test*","Integration*"]
 python_functions = ["test_*"]
 # Asyncio configuration
 asyncio_mode = "auto"
 # Output configuration
 addopts = [
   "-v",
+  "-s", # Show print statements
   "--tb=short",
   "--strict-markers",
   "--disable-warnings",

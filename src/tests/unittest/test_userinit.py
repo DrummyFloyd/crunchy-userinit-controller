@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from userinit.userinit import on_pguser_secret_created
 
 
+@pytest.mark.unit
 class TestPgUserSecretHandler:
     """Test the main Kopf event handler."""
 
@@ -104,7 +105,3 @@ class TestPgUserSecretHandler:
 
         with pytest.raises(kopf.TemporaryError, match="Connection failed"):
             await on_pguser_secret_created(body=valid_secret_body)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

@@ -10,6 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from userinit.database import DatabaseManager
 
 
+@pytest.mark.unit
 class TestDatabaseManager:
     """Test the DatabaseManager class."""
 
@@ -47,7 +48,3 @@ class TestDatabaseManager:
 
         with pytest.raises(Exception, match="DB Error"):
             await db_manager.change_owner("test_db", "new_user")
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v"])

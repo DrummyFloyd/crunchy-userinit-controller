@@ -5,8 +5,7 @@ on:
   pull_request:
     # types: [review_requested, ready_for_review]
     paths:
-      - "src/**"
-      - tests/**
+      - "src/**/*.py"
       - pyproject.toml
       - .python-version
       - "uv.lock"
@@ -14,8 +13,7 @@ on:
     branches:
       - main
     paths:
-      - "src/**"
-      - tests/**
+      - "src/**/*.py"
       - pyproject.toml
       - .python-version
       - "uv.lock"
@@ -42,7 +40,7 @@ jobs:
 
       - name: Run pytest and coverage
         run: |
-          mise run coverage | tee pytest-coverage.txt
+          mise run ci-test | tee pytest-coverage.txt
 
       - name: Pytest coverage comment
         uses: MishaKav/pytest-coverage-comment@main

@@ -2,27 +2,31 @@
 helm = "3.17.4"
 helm-docs = "1.14.2"
 kind = "0.29.0"
+kubectl = "1.33.3"
 uv = "0.7.20"
 
 
-# Python Related
-[tasks.test]
-description = "Run the test suite"
-run = "uv run pytest"
+[env]
+PYTHONPATH = "{{cwd}}/src"
 
-[tasks.coverage-ui]
-description = "Run the test suite with coverage with html view"
-run = ["uv run pytest", "python -m webbrowser .coverage/htmlcov/index.html"]
+# Python Related
+[tasks.test-unittest]
+description = "Run the test suite"
+run = "uv run pytest -m unit --no-cov"
+
+[tasks.test-integration]
+description = "Run the integration test suite"
+confirm = "These task will DESTROY previous cluster & create a fresh cluster with the crunchydata operator. Do you want to continue?"
+run = ["src/tests/integration/deploy.sh -c","uv run pytest -m integration --no-cov"]
+
+[tasks.test-and-coverage]
+description = "Run the test suite and integration tests and coverage report"
+confirm = "These task will DESTROY previous cluster & create a fresh cluster with the crunchydata operator. Do you want to continue?"
+run = ["src/tests/integration/deploy.sh -c ","uv run pytest"]
 
 [tasks.lint]
 description = "Run the linter"
 run = "uv run ruff check"
-
-[tasks.local-run]
-description = "Run controller locally"
-run = 'kopf run --namespace {{arg(name="namespace")}} -m userinit.userinit'
-env = {DEV_MODE = "true"}
-dir = "{{cwd}}/src"
 
 [tasks.lint-fix]
 description = "Run the linter with fix"
@@ -45,3 +49,29 @@ run = "helm unittest charts/crunchy-userinit"
 [tasks.docker-build]
 description = "Build the docker image"
 run = "docker build . -t drummyfloyd/crunchy-userinit-controller:dev"
+
+# Local Dev/Testing Related
+[tasks.local-env]
+description = "Deploy the dev environment with KinD cluster & crunchydata operator + default-pg.yaml"
+run = "src/tests/integration/deploy.sh --pg default-pg"
+
+[tasks.local-run]
+env = {DEV_MODE = "true"}
+description = "Run controller locally"
+run = 'uv run kopf run --namespace {{arg(name="namespace",default="default-pg")}} -m userinit.userinit'
+
+[tasks.local-test]
+description = "Run local controller with kinD cluster (configured)"
+run = "mise run local-env"
+depends_post = "local-run"
+
+[tasks.local-destroy]
+description = "Destroy the local dev environment"
+run = "src/tests/integration/deploy.sh -d"
+
+# CI related
+[tasks.ci-test]
+hide = true
+description = "Run the test suite and integration tests in CI"
+wait_for = "local-env"
+run = ["src/tests/integration/deploy.sh -c ","uv run pytest"]
