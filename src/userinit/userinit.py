@@ -1,7 +1,7 @@
 import kopf
 from kubernetes_asyncio import config
 
-from .config import DEV_MODE, K8S_API_NS, LABEL_ENABLED, logger
+from .config import DEV_MODE, K8S_API_NS, LABELS_MATCH, logger
 from .connections import ConnectionManager
 from .database import DatabaseManager
 from .models import PgUserSecret
@@ -24,19 +24,19 @@ async def configure(settings: kopf.OperatorSettings, **_):
     "",
     "v1",
     "secret",
-    labels={"postgres-operator.crunchydata.com/role": "pguser", LABEL_ENABLED: "true"},
+    labels=LABELS_MATCH,
 )
 @kopf.on.create(
     "",
     "v1",
     "secret",
-    labels={"postgres-operator.crunchydata.com/role": "pguser", LABEL_ENABLED: "true"},
+    labels=LABELS_MATCH,
 )
 @kopf.on.resume(
     "",
     "v1",
     "secret",
-    labels={"postgres-operator.crunchydata.com/role": "pguser", LABEL_ENABLED: "true"},
+    labels=LABELS_MATCH,
 )
 async def on_pguser_secret_created(body, **kwargs):
     """Handle PostgreSQL user secret creation/update events"""
