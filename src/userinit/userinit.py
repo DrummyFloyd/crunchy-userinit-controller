@@ -1,17 +1,25 @@
 import kopf
 from kubernetes_asyncio import config
 
-from .config import DEV_MODE, K8S_API_NS, LABELS_MATCH, logger
+from .config import (
+    ANNOTATION_MIGRATED,
+    DEV_MODE,
+    K8S_API_NS,
+    K8S_API_NS_DEPRECATED,
+    LABELS_MATCH,
+    LABELS_MATCH_DEPRECATED,
+    logger,
+)
 from .connections import ConnectionManager
 from .database import DatabaseManager
 from .models import PgUserSecret
 
 
-@kopf.on.startup()
+@kopf.on.startup(id="crui-startup")
 async def configure(settings: kopf.OperatorSettings, **_):
+    settings.peering.standalone = True
     settings.persistence.diffbase_storage = kopf.AnnotationsDiffBaseStorage(
-        prefix=K8S_API_NS,
-        key="last-handled-configuration",
+        prefix=K8S_API_NS, key="last-handled-configuration", v1=False
     )
     if DEV_MODE:
         logger.warning("running in dev mode")
@@ -21,25 +29,41 @@ async def configure(settings: kopf.OperatorSettings, **_):
 
 
 @kopf.on.update(
-    "",
-    "v1",
-    "secret",
-    labels=LABELS_MATCH,
+    "", "v1", "secret", labels=LABELS_MATCH_DEPRECATED, id="update-crui-deprecated"
 )
 @kopf.on.create(
-    "",
-    "v1",
-    "secret",
-    labels=LABELS_MATCH,
+    "", "v1", "secret", labels=LABELS_MATCH_DEPRECATED, id="create-crui-deprecated"
 )
 @kopf.on.resume(
-    "",
-    "v1",
-    "secret",
-    labels=LABELS_MATCH,
+    "", "v1", "secret", labels=LABELS_MATCH_DEPRECATED, id="resume-crui-deprecated"
 )
-async def on_pguser_secret_created(body: kopf.Body, **_):
+async def on_deprecated_labels(body: kopf.Body, patch: kopf.Patch, **_):
+    """Handle deprecated label events"""
+    for annotation in body.metadata.annotations:
+        if annotation.startswith(K8S_API_NS_DEPRECATED):
+            logger.warning(
+                f"removing deprecated annotation {annotation} from secret {body.metadata.name}"
+            )
+            patch.metadata.annotations[annotation] = None
+    patch.metadata.annotations[ANNOTATION_MIGRATED] = "False"
+    raise kopf.PermanentError(
+        f"deprecated labels detected on secret {body.metadata.name}, please update to use {K8S_API_NS} instead of {K8S_API_NS_DEPRECATED}"
+    )
+
+
+@kopf.on.create("", "v1", "secret", labels=LABELS_MATCH, id="create-crui")
+@kopf.on.update("", "v1", "secret", labels=LABELS_MATCH, id="update-crui")
+@kopf.on.resume("", "v1", "secret", labels=LABELS_MATCH, id="resume-crui")
+async def on_pguser_secret_created(body: kopf.Body, patch: kopf.Patch, **_):
     """Handle PostgreSQL user secret creation/update events"""
+
+    if any(K8S_API_NS_DEPRECATED in key for key in body.metadata.labels):
+        logger.warning(
+            f"Secret '{body.metadata.name}' contains unused deprecated label '{K8S_API_NS_DEPRECATED}'.Consider removing it for clarity since the current labels are already in use."
+        )
+        patch.metadata.annotations[ANNOTATION_MIGRATED] = "True"
+    else:
+        patch.metadata.annotations[ANNOTATION_MIGRATED] = None
     try:
         # Parse and validate the secret
         pguser_secret = PgUserSecret.from_k8s_secret(body)
@@ -69,7 +93,7 @@ async def on_pguser_secret_created(body: kopf.Body, **_):
                 delay=60,
             )
         finally:
-            await conn.close()
+            _ = await conn.close()
 
     except kopf.TemporaryError:
         # Re-raise kopf errors as-is
