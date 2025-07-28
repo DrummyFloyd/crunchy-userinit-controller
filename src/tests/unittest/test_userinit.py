@@ -30,7 +30,7 @@ class TestPgUserSecretHandler:
         mock_db_manager = AsyncMock()
         mock_db_manager_class.return_value = mock_db_manager
 
-        await on_pguser_secret_created(body=valid_secret_body)
+        await on_pguser_secret_created(body=valid_secret_body, patch=valid_secret_body)
 
         mock_open_conn.assert_called_once_with("test-ns", "test-cluster", "postgres")
         mock_db_manager_class.assert_called_once_with(mock_conn)
@@ -43,11 +43,13 @@ class TestPgUserSecretHandler:
     ):
         # Test when superuser label is missing
         del valid_secret_body.metadata.labels[
-            "crunchy-userinit.ramblurr.github.com/superuser"
+            "crunchy-userinit.drummyfloyd.github.com/superuser"
         ]
 
         with pytest.raises(kopf.TemporaryError, match="superuser label not found"):
-            await on_pguser_secret_created(body=valid_secret_body)
+            await on_pguser_secret_created(
+                body=valid_secret_body, patch=valid_secret_body
+            )
 
     @pytest.mark.asyncio
     async def test_on_pguser_secret_created_missing_dbname(self, valid_secret_body):
@@ -55,7 +57,9 @@ class TestPgUserSecretHandler:
         del valid_secret_body.data["dbname"]
 
         with pytest.raises(kopf.TemporaryError, match="Could not parse dbname"):
-            await on_pguser_secret_created(body=valid_secret_body)
+            await on_pguser_secret_created(
+                body=valid_secret_body, patch=valid_secret_body
+            )
 
     @pytest.mark.asyncio
     async def test_on_pguser_secret_created_missing_user(self, valid_secret_body):
@@ -63,7 +67,9 @@ class TestPgUserSecretHandler:
         del valid_secret_body.data["user"]
 
         with pytest.raises(kopf.TemporaryError, match="Could not parse role_name"):
-            await on_pguser_secret_created(body=valid_secret_body)
+            await on_pguser_secret_created(
+                body=valid_secret_body, patch=valid_secret_body
+            )
 
     @pytest.mark.asyncio
     async def test_on_pguser_secret_created_superuser_skip(self, valid_secret_body):
@@ -72,7 +78,9 @@ class TestPgUserSecretHandler:
 
         # Should return without error and without calling change_owner
         with patch("userinit.userinit.DatabaseManager") as mock_db_manager_class:
-            await on_pguser_secret_created(body=valid_secret_body)
+            await on_pguser_secret_created(
+                body=valid_secret_body, patch=valid_secret_body
+            )
             mock_db_manager_class.assert_not_called()
 
     @pytest.mark.asyncio
@@ -90,7 +98,9 @@ class TestPgUserSecretHandler:
         mock_db_manager_class.return_value = mock_db_manager
 
         with pytest.raises(kopf.TemporaryError, match="Failed to change the owner"):
-            await on_pguser_secret_created(body=valid_secret_body)
+            await on_pguser_secret_created(
+                body=valid_secret_body, patch=valid_secret_body
+            )
 
         # Ensure connection is still closed even on error
         mock_conn.close.assert_called_once()
@@ -104,4 +114,6 @@ class TestPgUserSecretHandler:
         mock_open_conn.side_effect = kopf.TemporaryError("Connection failed", delay=10)
 
         with pytest.raises(kopf.TemporaryError, match="Connection failed"):
-            await on_pguser_secret_created(body=valid_secret_body)
+            await on_pguser_secret_created(
+                body=valid_secret_body, patch=valid_secret_body
+            )

@@ -58,7 +58,7 @@ class TestPgUserSecret:
     def test_from_k8s_secret_missing_superuser_label(self, valid_secret_body):
         # Test when superuser label is missing
         del valid_secret_body.metadata.labels[
-            "crunchy-userinit.ramblurr.github.com/superuser"
+            "crunchy-userinit.drummyfloyd.github.com/superuser"
         ]
 
         with pytest.raises(kopf.TemporaryError, match="superuser label not found"):

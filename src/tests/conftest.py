@@ -21,7 +21,7 @@ class MockSecret:
     """
 
     def __init__(self, data_dict):
-        # Store the original dict for get() method
+        # Store the original dict for get() method and iteration
         self._dict = data_dict
         # Convert nested structures to support dot notation
         for key, value in data_dict.items():
@@ -41,7 +41,10 @@ class MockSecret:
     def __setitem__(self, key, value):
         """Allow setting values."""
         self._dict[key] = value
-        setattr(self, key, value)
+        if isinstance(value, dict):
+            setattr(self, key, MockSecret(value))
+        else:
+            setattr(self, key, value)
 
     def __delitem__(self, key):
         """Allow deleting keys."""
@@ -52,6 +55,30 @@ class MockSecret:
     def __contains__(self, key):
         """Support 'in' operator."""
         return key in self._dict
+
+    def __iter__(self):
+        """Support iteration over keys."""
+        return iter(self._dict)
+
+    def __len__(self):
+        """Support len() function."""
+        return len(self._dict)
+
+    def keys(self):
+        """Return dict keys."""
+        return self._dict.keys()
+
+    def values(self):
+        """Return dict values."""
+        return self._dict.values()
+
+    def items(self):
+        """Return dict items."""
+        return self._dict.items()
+
+    def __repr__(self):
+        """String representation for debugging."""
+        return f"MockSecret({self._dict!r})"
 
 
 @pytest.fixture(scope="session")
@@ -73,23 +100,39 @@ def mock_k8s_secret():
         dbname: str = "testdb",
         superuser: str = "postgres",
         enabled: bool = True,
+        deprecated_labels: bool = False,
+        deprecated_annotations: bool = False,
     ) -> MockSecret:
         labels = {
             "postgres-operator.crunchydata.com/cluster": cluster_name,
             "postgres-operator.crunchydata.com/role": "pguser",
         }
+        annotations = {
+            "crunchy-userinit.drummyfloyd.github.com/kopf-managed": "yes",
+            "crunchy-userinit.drummyfloyd.github.com/last-handled-configuration": "random-config",
+        }
+        if deprecated_labels:
+            labels["crunchy-userinit.ramblurr.github.com/enabled"] = "true"
+            labels["crunchy-userinit.ramblurr.github.com/superuser"] = superuser
+
+        if deprecated_annotations:
+            annotations["crunchy-userinit.ramblurr.github.com/kopf-managed"] = "true"
+            annotations[
+                "crunchy-userinit.ramblurr.github.com/last-handled-configuration"
+            ] = "random-config"
 
         if enabled:
-            labels["crunchy-userinit.ramblurr.github.com/enabled"] = "true"
+            labels["crunchy-userinit.drummyfloyd.github.com/enabled"] = "true"
 
         if superuser:
-            labels["crunchy-userinit.ramblurr.github.com/superuser"] = superuser
+            labels["crunchy-userinit.drummyfloyd.github.com/superuser"] = superuser
 
         secret_data = {
             "metadata": {
                 "name": f"{cluster_name}-pguser-{username}",
                 "namespace": namespace,
                 "labels": labels,
+                "annotations": annotations,
             },
             "data": {
                 "dbname": base64.b64encode(dbname.encode()).decode(),
@@ -140,11 +183,15 @@ def valid_secret_body():
             "metadata": {
                 "name": "test-cluster-pguser-testuser",
                 "namespace": "test-ns",
+                "annotations": {
+                    "crunchy-userinit.drummyfloyd.github.com/kopf-managed": "yes",
+                    "crunchy-userinit.drummyfloyd.github.com/last-handled-configuration": "random-config",
+                },
                 "labels": {
                     "postgres-operator.crunchydata.com/cluster": "test-cluster",
                     "postgres-operator.crunchydata.com/role": "pguser",
-                    "crunchy-userinit.ramblurr.github.com/enabled": "true",
-                    "crunchy-userinit.ramblurr.github.com/superuser": "postgres",
+                    "crunchy-userinit.drummyfloyd.github.com/enabled": "true",
+                    "crunchy-userinit.drummyfloyd.github.com/superuser": "postgres",
                 },
             },
             "data": {
