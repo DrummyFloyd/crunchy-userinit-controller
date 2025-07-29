@@ -26,6 +26,7 @@ lint = [
     "ruff>=0.12.5",
 ]
 test = [
+    "kubernetes>=33.1.0",
     "pytest>=8.4.1",
     "pytest-asyncio>=1.1",
     "pytest-cov>=6.2.1",
