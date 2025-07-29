@@ -7,7 +7,7 @@ image:
   # -- Container image pull policy
   pullPolicy: IfNotPresent
   # -- Container image tag (immutable tags are recommended)
-  tag: ""
+  tag: "@sha256:b00ce90c6bb5f64b92038d32b355864d98cf08ef71226b47276f14c828bf299b"
 
 rbac:
   # TODO: to implement
