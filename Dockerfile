@@ -36,6 +36,6 @@ CMD ["/app/entrypoint.sh"]
 # Add metadata labels
 LABEL org.opencontainers.image.version=${GIT_HASH}
 LABEL org.opencontainers.image.created=${BUILD_DATE}
-LABEL org.opencontainers.image.documentation="https://github.com/Ramblurr/crunchy-userinit-controller"
-LABEL org.opencontainers.image.source="https://github.com/Ramblurr/crunchy-userinit-controller"
-LABEL org.opencontainers.image.vendor="@ramblurr"
+LABEL org.opencontainers.image.documentation="https://github.com/DrummyFloyd/crunchy-userinit-controller/blob/main/README.md"
+LABEL org.opencontainers.image.source="https://github.com/DrummyFloyd/crunchy-userinit-controller"
+LABEL org.opencontainers.image.vendor="@drummyfloyd"

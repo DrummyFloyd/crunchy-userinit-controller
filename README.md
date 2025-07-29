@@ -51,9 +51,9 @@ spec:
   metadata:
     labels:
       # This label is required for the userinit-controller to activate
-      crunchy-userinit.ramblurr.github.com/enabled: "true"
+      crunchy-userinit.drummyfloyd.github.com/enabled: "true"
       # This label is required to tell the userinit-controller which user is the the superuser
-      crunchy-userinit.ramblurr.github.com/superuser: "dbroot"
+      crunchy-userinit.drummyfloyd.github.com/superuser: "dbroot"
   postgresVersion: 16
 
   ... snip ...
