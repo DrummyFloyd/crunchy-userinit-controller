@@ -9,7 +9,7 @@ APP_NAME = "crunchy-userinit"
 K8S_API_NS = "crunchy-userinit.drummyfloyd.github.com"
 K8S_API_NS_DEPRECATED = "crunchy-userinit.ramblurr.github.com"
 LABEL_ENABLED = f"{K8S_API_NS}/enabled"
-LABEL_ENABLED_DEPREACTED = f"{K8S_API_NS_DEPRECATED}/enabled"
+LABEL_ENABLED_DEPRECATED = f"{K8S_API_NS_DEPRECATED}/enabled"
 LABEL_SUPERUSER = f"{K8S_API_NS}/superuser"
 ANNOTATION_MIGRATED = f"{K8S_API_NS}/migrated"
 LABELS_MATCH = {
@@ -18,7 +18,7 @@ LABELS_MATCH = {
 }
 LABELS_MATCH_DEPRECATED = {
     "postgres-operator.crunchydata.com/role": "pguser",
-    LABEL_ENABLED_DEPREACTED: "true",
+    LABEL_ENABLED_DEPRECATED: "true",
 }
 CRUI_WATCH_NAMESPACE = os.environ.get("CRUI_WATCH_NAMESPACE", "default")
 

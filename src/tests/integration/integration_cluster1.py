@@ -15,7 +15,7 @@ os.environ["DEV_MODE"] = "true"  # Set DEV_MODE environment variable for testing
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 SECRET_NAME_USER1 = f"{YAML_FILE}-pguser-user1"
-PATCH_DECPRECATED_ANNOTATIONS = {
+PATCH_DEPRECATED_ANNOTATIONS = {
     "metadata": {
         "annotations": {
             "crunchy-userinit.ramblurr.github.com/kopf": "yes",
@@ -79,7 +79,7 @@ class IntegrationWithCluster1:
         _ = v1.patch_namespaced_secret(
             name=SECRET_NAME_USER1,
             namespace=YAML_FILE,
-            body=PATCH_DECPRECATED_ANNOTATIONS,
+            body=PATCH_DEPRECATED_ANNOTATIONS,
         )
         with KopfRunner(
             [

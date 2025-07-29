@@ -10,7 +10,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 # Import the main userinit handler
-from userinit.userinit import on_pguser_secret_created
+from userinit.userinit import on_deprecated_labels, on_pguser_secret_created
 
 
 @pytest.mark.unit
@@ -117,3 +117,16 @@ class TestPgUserSecretHandler:
             await on_pguser_secret_created(
                 body=valid_secret_body, patch=valid_secret_body
             )
+
+
+@pytest.mark.unit
+class TestDeprecatedLabels:
+    """Test handling of deprecated labels."""
+
+    async def test_deprecated_labels_error(self, mock_k8s_secret):
+        deprecated_secret_body = mock_k8s_secret(
+            actual_annotations=False, actual_labels=False, deprecated_labels=True
+        )
+
+        with pytest.raises(kopf.PermanentError):
+            await on_deprecated_labels(body=deprecated_secret_body)

@@ -6,6 +6,7 @@ from .config import (
     K8S_API_NS,
     K8S_API_NS_DEPRECATED,
     LABELS_MATCH,
+    LABELS_MATCH_DEPRECATED,
     logger,
 )
 from .connections import ConnectionManager
@@ -24,7 +25,7 @@ async def configure(settings: kopf.OperatorSettings, **_):
         logger.warning("running in dev mode")
         _ = await config.load_kube_config()
     else:  # pragma: no cover
-        config.load_incluster_config()
+        _ = config.load_incluster_config()
 
 
 @kopf.on.create("", "v1", "secret", labels=LABELS_MATCH, id="create-crui")
@@ -81,3 +82,19 @@ async def on_pguser_secret_created(body: kopf.Body, patch: kopf.Patch, **_):
             f"Unexpected error processing pguser secret: {e}",
             delay=60,
         )
+
+
+@kopf.on.create(
+    "", "v1", "secret", labels=LABELS_MATCH_DEPRECATED, id="create-deprecated"
+)
+@kopf.on.update(
+    "", "v1", "secret", labels=LABELS_MATCH_DEPRECATED, id="update-deprecated"
+)
+@kopf.on.resume(
+    "", "v1", "secret", labels=LABELS_MATCH_DEPRECATED, id="resume-deprecated"
+)
+async def on_deprecated_labels(body: kopf.Body, **_):
+    """Handle deprecated label events"""
+    raise kopf.PermanentError(
+        f"deprecated labels detected on secret {body.metadata.name}, please update to use {K8S_API_NS} instead of {K8S_API_NS_DEPRECATED}"
+    )
