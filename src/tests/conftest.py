@@ -9,6 +9,7 @@ from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from kubernetes import client, config
 
 # Add src directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -100,17 +101,23 @@ def mock_k8s_secret():
         dbname: str = "testdb",
         superuser: str = "postgres",
         enabled: bool = True,
+        actual_annotations: bool = True,
+        actual_labels: bool = True,
         deprecated_labels: bool = False,
         deprecated_annotations: bool = False,
     ) -> MockSecret:
-        labels = {
-            "postgres-operator.crunchydata.com/cluster": cluster_name,
-            "postgres-operator.crunchydata.com/role": "pguser",
-        }
-        annotations = {
-            "crunchy-userinit.drummyfloyd.github.com/kopf-managed": "yes",
-            "crunchy-userinit.drummyfloyd.github.com/last-handled-configuration": "random-config",
-        }
+        labels = {}
+        annotations = {}
+        if actual_labels:
+            labels = {
+                "postgres-operator.crunchydata.com/cluster": cluster_name,
+                "postgres-operator.crunchydata.com/role": "pguser",
+            }
+        if actual_annotations:
+            annotations = {
+                "crunchy-userinit.drummyfloyd.github.com/kopf-managed": "yes",
+                "crunchy-userinit.drummyfloyd.github.com/last-handled-configuration": "random-config",
+            }
         if deprecated_labels:
             labels["crunchy-userinit.ramblurr.github.com/enabled"] = "true"
             labels["crunchy-userinit.ramblurr.github.com/superuser"] = superuser
@@ -309,3 +316,20 @@ def data_generators():
             return f"postgresql://{user}:{password}@{host}:{port}/{dbname}"
 
     return DataGenerators
+
+
+@pytest.fixture
+def k8s_connection():
+    """Ensure we are connected to the Kubernetes cluster."""
+    try:
+        config.load_kube_config()
+    except config.ConfigException:
+        config.load_incluster_config()
+
+    # Verify connection
+    v1 = client.CoreV1Api()
+    try:
+        v1.list_namespace()
+        print("✓ Kubernetes connection verified")
+    except Exception as e:
+        pytest.fail(f"Failed to connect to Kubernetes: {e}")
