@@ -17,7 +17,6 @@ spec:
     labels:
       crunchy-userinit.drummyfloyd.github.com/enabled: "true"
       crunchy-userinit.drummyfloyd.github.com/superuser: postgres
-      random: "true"
   patroni: {}
   service:
     type: NodePort
