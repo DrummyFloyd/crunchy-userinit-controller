@@ -33,13 +33,13 @@ jobs:
           fetch-depth: 0
       - uses: jdx/mise-action@v2
         with:
-          version: 2025.7.2
           install: true
           cache: false
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run pytest and coverage
         run: |
+          set -o pipefail
           mise run ci-test | tee pytest-coverage.txt
 
       - name: Pytest coverage comment
@@ -48,4 +48,3 @@ jobs:
           junitxml-path: .coverage/junit.xml
           title: Coverage Report
           hide-report: false
-
