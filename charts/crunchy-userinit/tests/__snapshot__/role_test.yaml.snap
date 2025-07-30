@@ -1,9 +1,9 @@
-should match snapshot with defautl:
+should match snapshot with default:
   1: |
     apiVersion: rbac.authorization.k8s.io/v1
     kind: Role
     metadata:
-      name: test-crunchy-userinit-controller-role-namespaced
+      name: test-crunchy-userinit-controller-role
       namespace: test-ns
     rules:
       - apiGroups:
@@ -35,3 +35,4 @@ should match snapshot with defautl:
     subjects:
       - kind: ServiceAccount
         name: test-crunchy-userinit-controller
+        namespace: test-ns

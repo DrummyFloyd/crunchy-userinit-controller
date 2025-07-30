@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
+suite: Fail
+templates:
+  - deployment.yaml
+release:
+  name: test
+  namespace: test-ns
+chart:
+  version: 0.0.0
+  appVersion: 0.0.0
+tests:
+  - it: should fail on non correct watch.mode
+    set:
+      watch:
+        mode: random
+    asserts:
+      - failedTemplate:
+          errorMessage: "watch.mode must be one of: current, all, list"
+
+  - it: should fail on empty watch.namespaces list
+    set:
+      watch:
+        mode: list
+        namespaces: []
+    asserts:
+      - failedTemplate:
+          errorMessage: "watch.namespaces cannot be empty when watch.mode is 'list'"
+
+  - it: should fail on non empty watch.namespaces with wrong mode
+    set:
+      watch:
+        mode: all
+        namespaces:
+          - random
+    asserts:
+      - failedTemplate:
+          errorMessage: "watch.namespaces should only be set when watch.mode is 'list'"

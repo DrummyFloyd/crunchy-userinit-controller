@@ -60,3 +60,100 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Validate if a namespace name contains Kopf patterns that require cluster RBAC
+Kopf supports: *, ?, ! (negation), , (multiple patterns)
+*/}}
+{{- define "crunchy-userinit.isKopfPattern" -}}
+{{- $name := . -}}
+{{- $isPattern := false -}}
+{{- if or (contains "*" $name) (contains "?" $name) (contains "!" $name) (contains "," $name) -}}
+  {{- $isPattern = true -}}
+{{- end -}}
+{{- $isPattern -}}
+{{- end -}}
+
+{{- define "crunchy-userinit.needsClusterRBAC" -}}
+{{- $needsCluster := false -}}
+{{- if eq .Values.watch.mode "all" -}}
+  {{- $needsCluster = true -}}
+{{- else if eq .Values.watch.mode "list" -}}
+  {{- range .Values.watch.namespaces -}}
+    {{- $isPattern := include "crunchy-userinit.isKopfPattern" . -}}
+    {{- if eq $isPattern "true" -}}
+      {{- $needsCluster = true -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if .Values.rbac.forceCluster -}}
+  {{- $needsCluster = true -}}
+{{- end -}}
+{{- if $needsCluster -}}
+true
+{{- else -}}
+false
+{{- end -}}
+{{- end -}}
+
+{{/*
+Validate watch configuration
+*/}}
+{{- define "crunchy-userinit.validateWatchConfig" -}}
+{{- if not (has .Values.watch.mode (list "current" "all" "list")) -}}
+  {{- fail "watch.mode must be one of: current, all, list" -}}
+{{- end -}}
+
+{{- if and (eq .Values.watch.mode "list") (not .Values.watch.namespaces) -}}
+  {{- fail "watch.namespaces cannot be empty when watch.mode is 'list'" -}}
+{{- end -}}
+
+{{- if and (ne .Values.watch.mode "list") .Values.watch.namespaces -}}
+  {{- fail "watch.namespaces should only be set when watch.mode is 'list'" -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Generate deployment args
+*/}}
+{{- define "crunchy-userinit.deploymentArgs" -}}
+- --log-format={{ .Values.log.format }}
+{{- if .Values.log.debug }}
+- --debug
+{{- end }}
+{{- if .Values.livenessProbe.enabled }}
+- --liveness=http://0.0.0.0:8080/healthz
+{{- end }}
+{{- if eq .Values.watch.mode "all" }}
+- --all-namespaces
+{{- else if eq .Values.watch.mode "list" }}
+{{- range .Values.watch.namespaces }}
+- --namespace={{ . }}
+{{- end }}
+{{- else }}
+- --namespace={{ .Release.Namespace }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Generate configuration summary for NOTES.txt
+*/}}
+{{- define "crunchy-userinit.configSummary" -}}
+{{- $clusterRBAC := include "crunchy-userinit.needsClusterRBAC" . -}}
+
+Configuration Summary:
+- Watch Mode: {{ .Values.watch.mode }}
+{{- if eq .Values.watch.mode "list" }}
+- Watched Namespaces: {{ .Values.watch.namespaces | join ", " }}
+{{- end }}
+- RBAC Type: {{ if eq $clusterRBAC "true" }}Cluster-wide{{ else }}Namespace-scoped{{ end }}
+{{- if .Values.rbac.forceCluster }}
+- Cluster RBAC: Forced enabled
+{{- else if eq $clusterRBAC "true" }}
+{{- if eq .Values.watch.mode "all" }}
+- Cluster RBAC: Auto-enabled (watching all namespaces)
+{{- else }}
+- Cluster RBAC: Auto-enabled (Kopf patterns detected)
+{{- end }}
+{{- end }}
+{{- end -}}

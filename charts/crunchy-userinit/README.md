@@ -8,9 +8,20 @@ Installs crunchy-userinit-controller
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| ramblurr | <unnamedrambler@gmail.com> |  |
+| drummyfloyd | <false.drummyfloyd@gmail.com> |  |
 
 ## Values
+
+### Controller configuration
+
+| Key | Type | Default | Description |
+|-----|------|---------|-------------|
+| rbac.create | bool | `true` | Create RBAC resources |
+| rbac.forceCluster | bool | `false` | Force cluster-level RBAC regardless of watch configuration When false (default), cluster RBAC is automatically enabled if: - watch.mode is "all" - watch.namespaces contains regex patterns (* ? [ ]) When true, always use cluster RBAC |
+| watch.mode | string | `"current"` | Watch mode: "current" | "all" | "list" current: Watch only the namespace where controller is deployed all: Watch all namespaces (automatically enables cluster RBAC) list: Watch specific namespaces listed in 'namespaces' |
+| watch.namespaces | list | `[]` | List of namespaces to watch (only used when mode="list") Supports Kopf patterns: * (glob), ? (single char), ! (negation), , (multiple) Patterns automatically enable cluster RBAC |
+
+### Other Values
 
 | Key | Type | Default | Description |
 |-----|------|---------|-------------|
@@ -21,12 +32,14 @@ Installs crunchy-userinit-controller
 | image.repository | string | `"ghcr.io/drummyfloyd/crunchy-userinit-controller"` | Container image repository |
 | image.tag | string | `""` | Container image tag (immutable tags are recommended) |
 | imagePullSecrets | list | `[]` | Specify docker-registry secret names as an array |
+| livenessProbe.enabled | bool | `true` | Enabled livenessProbe |
+| log.debug | bool | `false` | Enable debug mode |
+| log.format | string | `"plain"` | Log format of the controller (plain|full|json) |
 | nameOverride | string | `""` | String to partially override crunchy-userinit-controller.fullname template |
 | nodeSelector | object | `{}` | Node labels for pod assignment |
 | podAnnotations | object | `{}` | Annotations to add to the pod |
 | podLabels | object | `{}` | Labels to add to the pod |
 | podSecurityContext | object | `{}` | Configure pod security context |
-| rbac.create | bool | `true` | Enabled RBAC on namespace level |
 | replicaCount | int | `1` | Set number of replicas |
 | resources | object | `{}` | Resource limits and requests for the controller pod |
 | securityContext | object | `{}` | Configure container security context |

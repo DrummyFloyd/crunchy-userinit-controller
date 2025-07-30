@@ -28,9 +28,10 @@ should match snapshot with default values:
             helm.sh/chart: crunchy-userinit-controller-0.0.0
         spec:
           containers:
-            - env:
-                - name: CRUI_WATCH_NAMESPACE
-                  value: test-ns
+            - args:
+                - --log-format=plain
+                - --liveness=http://0.0.0.0:8080/healthz
+                - --namespace=test-ns
               image: ghcr.io/drummyfloyd/crunchy-userinit-controller:0.0.0
               imagePullPolicy: IfNotPresent
               livenessProbe:

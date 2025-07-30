@@ -1,3 +1,4 @@
+{{- include "crunchy-userinit.validateWatchConfig" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,14 +37,16 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            {{- include "crunchy-userinit.deploymentArgs" . | nindent 12 }}
+          {{- if .Values.livenessProbe}}
           livenessProbe:
             httpGet:
               path: /healthz
               port: 8080
-          env:
-            - name: CRUI_WATCH_NAMESPACE
-              value: "{{ .Release.Namespace }}"
+          {{- end }}
             {{- with .Values.extraEnv }}
+          env:
               {{- . | toYaml | nindent 12 }}
             {{- end }}
           resources:
