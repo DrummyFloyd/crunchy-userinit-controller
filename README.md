@@ -135,29 +135,14 @@ spec:
   ... snip ...
 ```
 
-## Contributing
-
-When using this repo locally or contributing to this repo, you will need to build the dependencies used for each helm chart.
-You can run the following commands to do so:
-
-### The Controller
-
-If you use nix, then just activate the dev shell and you'll be good to go.
-
-On other distros, you'll have to install the requirements yourself.
-
-To run it locally
-
-1. Ensure `KUBECONFIG` is defined
-2. `export DEV_MODE=y`
-3. Run it:
-
-   ```sh
-   kopf run --dev --namespace YOUR_DB_NS src/userinit.py
-   ```
-
 ### The Chart
 
-The chart is pretty simple and is in `charts/`
+The chart is pretty simple and is in [charts](/charts/crunchy-userinit/) directory.
 
 [crunchy]: https://access.crunchydata.com/documentation/postgres-operator/latest/
+
+## Contributing
+
+If you have improvements or fixes, we would love to have your contributions.
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for more information on the process we would like
+contributors to follow.
