@@ -16,6 +16,63 @@ As a user of the [CrunchyData PostgreSQL Operator](https://github.com/CrunchyDat
 
 Special thanks to @Ramblurr for creating this valuable project and maintaining it. Your work has been instrumental in helping the community manage PostgreSQL user initialization with the CrunchyData operator. Thank you for your contributions and for making this project available to the open-source community.
 
+## Migration from 0.x to v1.x
+
+> **⚠️ BREAKING CHANGE:** If you're migrating from the original `ramblurr/crunchy-userinit-controller`, you **must** update your `PostgresCluster` manifests.
+
+### What Changed
+
+The API namespace has been migrated from:
+
+- **Old:** `crunchy-userinit.ramblurr.github.com`
+- **New:** `crunchy-userinit.drummyfloyd.github.com`
+
+### Migration Steps
+
+1. **Update your PostgresCluster labels:**
+
+   ```yaml
+   # ❌ OLD - Will cause errors
+   metadata:
+     labels:
+       crunchy-userinit.ramblurr.github.com/enabled: "true"
+       crunchy-userinit.ramblurr.github.com/superuser: "dbroot"
+
+   # ✅ NEW - Required format
+   metadata:
+     labels:
+       crunchy-userinit.drummyfloyd.github.com/enabled: "true"
+       crunchy-userinit.drummyfloyd.github.com/superuser: "dbroot"
+   ```
+
+2. **Automated migration command:**
+
+   ```bash
+   # Update all your PostgresCluster YAML files
+   sed -i 's/crunchy-userinit\.ramblurr\.github\.com/crunchy-userinit.drummyfloyd.github.com/g' *.yaml
+
+   # Apply the updated manifests
+   kubectl apply -f your-postgres-cluster.yaml
+   ```
+
+3. **Upgrade the controller:**
+
+   ```bash
+   # Uninstall old version
+   helm uninstall -n YOUR_DB_NS crunchy-userinit-controller
+
+   # Install new version
+   helm repo add crunchy-userinit-controller https://drummyfloyd.github.io/crunchy-userinit-controller
+   helm install -n YOUR_DB_NS crunchy-userinit-controller/crunchy-userinit-controller
+   ```
+
+### Impact
+
+- **✅ No data loss:** Existing database ownership remains intact
+- **✅ No service disruption:** Databases continue functioning normally
+- **⚠️ New user processing:** Will fail until manifests are updated
+- **🔧 One-time change:** Once migrated, no further action required
+
 ## What?
 
 This is a k8s controller that exists to run `ALTER DATABASE "{database_name}" OWNER TO "{user_name}"`.
@@ -38,7 +95,7 @@ helm repo update
 helm install -n YOUR_DB_NS crunchy-userinit-controller/crunchy-userinit-controller
 ```
 
-You must label annotate your `PostgresCluster` so the userinit-controller can find it:
+You must label annotate your `PostgresCluster` so the `userinit-controller` can find it:
 
 ```yaml
 ---
