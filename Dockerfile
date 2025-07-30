@@ -28,10 +28,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONPATH="/app"
 
-# Reset the entrypoint, don't invoke `uv`
-ENTRYPOINT []
 
-CMD ["/app/entrypoint.sh"]
+ENTRYPOINT ["kopf","run","-m","userinit.userinit"]
 
 # Add metadata labels
 LABEL org.opencontainers.image.version=${GIT_HASH}
