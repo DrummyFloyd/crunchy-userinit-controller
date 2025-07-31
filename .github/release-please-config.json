@@ -34,7 +34,7 @@
     },
     ".": {
       "release-type": "python",
-      "exclude-paths": ["charts/", ".github/workflows/"],
+      "exclude-paths": ["charts/", ".github/"],
       "extra-files": [
         {
           "type": "yaml",
