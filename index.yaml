@@ -2,6 +2,19 @@ apiVersion: v1
 entries:
   crunchy-userinit-controller:
   - apiVersion: v2
+    appVersion: 1.0.1
+    created: "2025-07-31T21:59:51.103319308Z"
+    description: Installs crunchy-userinit-controller
+    digest: 24199e4e0ad909331b63a631c110f84d32d39905f3ecc97a1bf04628a89aff5b
+    maintainers:
+    - email: false.drummyfloyd@gmail.com
+      name: drummyfloyd
+    name: crunchy-userinit-controller
+    type: application
+    urls:
+    - https://DrummyFloyd.github.io/crunchy-userinit-controller/crunchy-userinit-controller-1.0.0.tgz
+    version: 1.0.0
+  - apiVersion: v2
     appVersion: 0.0.5
     created: "2025-07-17T22:03:48.705955323Z"
     description: Installs crunchy-userinit-controller
@@ -14,4 +27,4 @@ entries:
     urls:
     - https://github.com/DrummyFloyd/crunchy-userinit-controller/releases/download/chart-0.0.5/crunchy-userinit-controller-0.0.5.tgz
     version: 0.0.5
-generated: "2025-07-17T22:03:48.705968849Z"
+generated: "2025-07-31T21:59:51.102108489Z"
