@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.0.0...v1.0.1) (2025-07-31)
+
+
+### Bug Fixes
+
+* set correct verison on uv.lock ([dc58f42](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/dc58f42d263e55a68440068939682bbd8600ef47))
+* uv.lock missing update on release-please ([839f0e6](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/839f0e68949c86e3794e3c06d50e9dcdbb8d1c0d))
+
 ## [1.0.0](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/0.0.5...v1.0.0) (2025-07-31)
 
 
