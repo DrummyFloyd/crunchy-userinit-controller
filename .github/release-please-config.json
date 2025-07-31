@@ -16,7 +16,21 @@
     "charts/crunchy-userinit": {
       "release-type": "helm",
       "package-name": "chart",
-      "include-v-in-tag": false
+      "include-v-in-tag": false,
+      "changelog-sections": [
+        {
+          "type": "feat",
+          "section": "Features"
+        },
+        {
+          "type": "fix",
+          "section": "Bug Fixes"
+        },
+        {
+          "type": "chore",
+          "section": "Chores"
+        }
+      ]
     },
     ".": {
       "release-type": "python",
@@ -26,6 +40,11 @@
           "type": "yaml",
           "path": "charts/crunchy-userinit/Chart.yaml",
           "jsonpath": "$.appVersion"
+        },
+        {
+          "type": "toml",
+          "path": "uv.lock",
+          "jsonpath": "$.package[?(@.name == 'crunchy-userinit-controller')].version"
         }
       ]
     }
