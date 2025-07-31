@@ -30,6 +30,16 @@
           "type": "chore",
           "section": "Chores"
         }
+      ],
+      "extra-files": [
+        {
+          "type": "generic",
+          "path": "charts/_README.gotmpl"
+        },
+        {
+          "type": "generic",
+          "path": "charts/crunchy-userinit/README.md"
+        }
       ]
     },
     ".": {

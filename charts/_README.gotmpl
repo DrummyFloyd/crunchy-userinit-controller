@@ -1,9 +1,10 @@
-
-
 {{ template "chart.header" . }}
 {{ template "chart.deprecationWarning" . }}
 
-{{ template "chart.badgesSection" . }}
+<!-- x-release-please-start-version -->
+![Version: 1.0.0
+](https://img.shields.io/static/v1?label=Version&message=1.0.0&color=informational) {{ template "chart.appVersionBadge" . }}
+<!-- x-release-please-end -->
 
 {{ template "chart.description" . }}
 
@@ -18,7 +19,3 @@
 {{ template "chart.valuesSection" . }}
 
 {{ template "helm-docs.versionFooter" . }}
-
-{{ template "chart.valuesSection" . }}
-
-{{ template "chart.valuesSectionHtml" . }}
