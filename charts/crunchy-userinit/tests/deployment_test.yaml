@@ -45,14 +45,6 @@ tests:
             app.kubernetes.io/name: crunchy-userinit-controller
             app.kubernetes.io/instance: test
 
-  - it: should have CRUI_WATCH_NAMESPACE environment variable
-    asserts:
-      - contains:
-          path: spec.template.spec.containers[0].env
-          content:
-            name: CRUI_WATCH_NAMESPACE
-            value: test-ns
-
   - it: should include extra environment variables
     set:
       extraEnv:
@@ -332,3 +324,52 @@ tests:
       - equal:
           path: spec.template.spec.containers[0].name
           value: crunchy-userinit-controller
+
+  - it: should not render livenessProbe
+    set:
+      livenessProbe:
+        enabled: false
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - --log-format=plain
+            - --namespace=test-ns
+  - it: should set all namespace
+    set:
+      watch:
+        mode: all
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - --log-format=plain
+            - --liveness=http://0.0.0.0:8080/healthz
+            - --all-namespaces
+  - it: should set list namespaces
+    set:
+      watch:
+        mode: list
+        namespaces:
+          - random
+          - pr-*
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - --log-format=plain
+            - --liveness=http://0.0.0.0:8080/healthz
+            - --namespace=random
+            - --namespace=pr-*
+  - it: should set debug mode
+    set:
+      log:
+        debug: true
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].args
+          value:
+            - --log-format=plain
+            - --debug
+            - --liveness=http://0.0.0.0:8080/healthz
+            - --namespace=test-ns

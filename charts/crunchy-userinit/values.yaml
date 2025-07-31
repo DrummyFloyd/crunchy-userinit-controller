@@ -9,16 +9,46 @@ image:
   # -- Container image tag (immutable tags are recommended)
   tag: ""
 
+watch:
+  # -- Watch mode: "current" | "all" | "list"
+  # current: Watch only the namespace where controller is deployed
+  # all: Watch all namespaces (automatically enables cluster RBAC)
+  # list: Watch specific namespaces listed in 'namespaces'
+  # @section -- Controller configuration
+  mode: current
+
+  # -- List of namespaces to watch (only used when mode="list")
+  # Supports Kopf patterns: * (glob), ? (single char), ! (negation), , (multiple)
+  # Patterns automatically enable cluster RBAC
+  # @section -- Controller configuration
+  namespaces: []
+  # Examples:
+  # - "production"               # Specific namespace
+  # - "staging"                  # Specific namespace
+  # - "*-pr-123-*"               # enables cluster RBAC
+  # - "app-?"                    # enables cluster RBAC
+  # - "!test-*"                  # enables cluster RBAC
+
 rbac:
-  # TODO: to implement
-  # clusterScope: false
-  # -- Enabled RBAC on namespace level
+  # -- Create RBAC resources
+  # @section -- Controller configuration
   create: true
+  # -- Force cluster-level RBAC regardless of watch configuration
+  # When false (default), cluster RBAC is automatically enabled if:
+  # - watch.mode is "all"
+  # - watch.namespaces contains regex patterns (* ? [ ])
+  # When true, always use cluster RBAC
+  # @section -- Controller configuration
+  forceCluster: false
+
+log:
+  # -- Log format of the controller (plain|full|json)
+  format: plain
+  # -- Enable debug mode
+  debug: false
 
 # -- Additional environment variables to apply to the main pod
 extraEnv: []
-#  - name: DEV_MODE_
-#    value: true
 
 # -- Specify docker-registry secret names as an array
 imagePullSecrets: []
@@ -40,6 +70,10 @@ serviceAccount:
   # -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
+
+livenessProbe:
+  # -- Enabled livenessProbe
+  enabled: true
 
 # -- Annotations to add to the pod
 podAnnotations: {}

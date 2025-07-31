@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/helm-unittest/helm-unittest/main/schema/helm-testsuite.json
-suite: RBAC NS
+suite: RBAC Cluster
 templates:
-  - role.yaml
+  - cluster-role.yaml
 release:
   name: test
   namespace: test-ns
@@ -13,9 +13,6 @@ set:
     repository: ghcr.io/drummyfloyd/crunchy-userinit-controller
     tag: 0.0.0
 tests:
-  - it: should match snapshot with default
-    asserts:
-      - matchSnapshot: {}
   - it: should not create rbac
     set:
       rbac:
@@ -26,8 +23,29 @@ tests:
   - it: should not create rbac when forceCluster
     set:
       rbac:
-        create: true
+        create: false
         forceCluster: true
     asserts:
       - hasDocuments:
           count: 0
+  - it: should create clusterRole with watch.mode=all
+    set:
+      watch:
+        mode: all
+    asserts:
+      - matchSnapshot: {}
+  - it: should create cluster role with watch.mode=list
+    set:
+      watch:
+        mode: list
+    asserts:
+      - matchSnapshot: {}
+  - it: should create cluster role on force
+    set:
+      watch:
+        mode: current
+      rbac:
+        forceCluster: true
+    asserts:
+      - hasDocuments:
+          count: 2

@@ -1,0 +1,56 @@
+should create clusterRole with watch.mode=all:
+  1: |
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRole
+    metadata:
+      labels:
+        app.kubernetes.io/instance: test
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: crunchy-userinit-controller
+        app.kubernetes.io/version: 0.0.0
+        helm.sh/chart: crunchy-userinit-controller-0.0.0
+      name: test-crunchy-userinit-controller-clusterrole
+    rules:
+      - apiGroups:
+          - ""
+        resources:
+          - events
+        verbs:
+          - create
+      - apiGroups:
+          - ""
+        resources:
+          - secrets
+        verbs:
+          - get
+          - list
+          - watch
+          - update
+          - patch
+      - apiGroups:
+          - ""
+        resources:
+          - namespaces
+        verbs:
+          - get
+          - list
+          - watch
+  2: |
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: ClusterRoleBinding
+    metadata:
+      labels:
+        app.kubernetes.io/instance: test
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: crunchy-userinit-controller
+        app.kubernetes.io/version: 0.0.0
+        helm.sh/chart: crunchy-userinit-controller-0.0.0
+      name: test-crunchy-userinit-controller-clusterrolebinding
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ClusterRole
+      name: test-crunchy-userinit-controller-clusterrole
+    subjects:
+      - kind: ServiceAccount
+        name: test-crunchy-userinit-controller
+        namespace: test-ns
