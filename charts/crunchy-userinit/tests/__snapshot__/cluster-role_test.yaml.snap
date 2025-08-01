@@ -9,7 +9,7 @@ should create clusterRole with watch.mode=all:
         app.kubernetes.io/name: crunchy-userinit-controller
         app.kubernetes.io/version: 0.0.0
         helm.sh/chart: crunchy-userinit-controller-0.0.0
-      name: test-crunchy-userinit-controller-clusterrole
+      name: test-crunchy-userinit-controller
     rules:
       - apiGroups:
           - ""
@@ -45,11 +45,11 @@ should create clusterRole with watch.mode=all:
         app.kubernetes.io/name: crunchy-userinit-controller
         app.kubernetes.io/version: 0.0.0
         helm.sh/chart: crunchy-userinit-controller-0.0.0
-      name: test-crunchy-userinit-controller-clusterrolebinding
+      name: test-crunchy-userinit-controller
     roleRef:
       apiGroup: rbac.authorization.k8s.io
       kind: ClusterRole
-      name: test-crunchy-userinit-controller-clusterrole
+      name: test-crunchy-userinit-controller
     subjects:
       - kind: ServiceAccount
         name: test-crunchy-userinit-controller

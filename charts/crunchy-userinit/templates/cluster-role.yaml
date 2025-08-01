@@ -2,7 +2,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: "{{ include "crunchy-userinit.fullname" . }}-clusterrole"
+  name: "{{ include "crunchy-userinit.fullname" . }}"
   labels:
     {{- include "crunchy-userinit.labels" . | nindent 4 }}
 rules:
@@ -21,13 +21,13 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: "{{ include "crunchy-userinit.fullname" . }}-clusterrolebinding"
+  name: "{{ include "crunchy-userinit.fullname" . }}"
   labels:
     {{- include "crunchy-userinit.labels" . | nindent 4 }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: "{{ include "crunchy-userinit.fullname" . }}-clusterrole"
+  name: "{{ include "crunchy-userinit.fullname" . }}"
 subjects:
   - kind: ServiceAccount
     name: "{{ include "crunchy-userinit.serviceAccountName" . }}"
