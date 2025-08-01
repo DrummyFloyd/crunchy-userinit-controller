@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-1.0.0...chart-1.0.1) (2025-08-01)
+
+
+### Bug Fixes
+
+* **charts:** hot fix role name in roleBinding ([cb96cc3](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/cb96cc344857fcb04a2fe288cc6b9fecd606a045))
+
 ## [1.0.0](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-0.0.5...chart-1.0.0) (2025-07-31)
 
 
