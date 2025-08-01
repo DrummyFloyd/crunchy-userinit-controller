@@ -63,6 +63,7 @@ jobs:
       - name: Debug
         run: |
           echo "${{ steps.vars.outputs.build-date }}"
+          echo "${{ stets.vars.outputs.git-hash }}"
 
       #platforms: linux/amd64,linux/arm64
       - name: Build and push
@@ -77,5 +78,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64
           build-args: |
-            BUILD_DATE=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+            BUILD_DATE=${{ steps.vars.outputs.build-date }}
             GIT_HASH=${{ steps.vars.outputs.git-hash }}

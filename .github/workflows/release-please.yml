@@ -19,3 +19,11 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           config-file: .github/release-please-config.json
           manifest-file: .github/.release-please-manifest.json
+      - uses: ./github/workflows/chart-release.yml
+        if: ${{ steps.release.outputs.['charts/crunchy-userinit--release_created'] }}
+        with:
+          new-tag: ${{ steps.release.outputs.['charts/crunchy-userinit--tag_name'] }}
+      - uses: ./github/workflows/docker-release.yml
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          new-tag: ${{ steps.release.outputs.tag_name }}
