@@ -1,8 +1,8 @@
 # crunchy-userinit-controller
 
 <!-- x-release-please-start-version -->
-![Version: 1.0.0
-](https://img.shields.io/static/v1?label=Version&message=1.0.0&color=informational) ![AppVersion: 1.0.1](https://img.shields.io/badge/AppVersion-1.0.1-informational?style=flat-square)
+![Version: 1.0.1
+](https://img.shields.io/static/v1?label=Version&message=1.0.1&color=informational) ![AppVersion: 1.0.1](https://img.shields.io/badge/AppVersion-1.0.1-informational?style=flat-square)
 <!-- x-release-please-end -->
 
 Installs crunchy-userinit-controller
