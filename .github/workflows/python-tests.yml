@@ -9,6 +9,7 @@ on:
       - pyproject.toml
       - .python-version
       - "uv.lock"
+      - .python-version
   push:
     branches:
       - main
@@ -17,6 +18,7 @@ on:
       - pyproject.toml
       - .python-version
       - "uv.lock"
+      - .python-version
 
 permissions:
   contents: write
