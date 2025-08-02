@@ -2,10 +2,9 @@
 name: (Docker) Release
 
 on:
-  push:
-    pull_request:
-      paths:
-        - renovate.json
+  pull_request:
+    paths:
+      - renovate.json
 jobs:
   renovate-dry-run:
     permissions:
