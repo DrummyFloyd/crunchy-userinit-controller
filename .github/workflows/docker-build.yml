@@ -11,6 +11,7 @@ on:
       - "Dockerfile"
       - "pyproject.toml"
       - "uv.lock"
+      - .python-version
   pull_request:
     paths:
       - "src/userinit/*.py"
@@ -18,6 +19,7 @@ on:
       - "Dockerfile"
       - "pyproject.toml"
       - "uv.lock"
+      - .python-version
 
 jobs:
   build-and-push:
