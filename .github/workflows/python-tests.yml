@@ -43,6 +43,7 @@ jobs:
           mise run ci-test | tee pytest-coverage.txt
 
       - name: Pytest coverage comment
+        if: github.event_name == 'pull_request'
         uses: MishaKav/pytest-coverage-comment@main
         with:
           junitxml-path: .coverage/junit.xml

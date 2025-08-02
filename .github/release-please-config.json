@@ -12,6 +12,7 @@
   ],
   "separate-pull-requests": true,
   "sequential-calls": true,
+  "always-update": true,
   "packages": {
     "charts/crunchy-userinit": {
       "release-type": "helm",
@@ -30,16 +31,6 @@
           "type": "chore",
           "section": "Chores"
         }
-      ],
-      "extra-files": [
-        {
-          "type": "generic",
-          "path": "charts/_README.gotmpl"
-        },
-        {
-          "type": "generic",
-          "path": "charts/crunchy-userinit/README.md"
-        }
       ]
     },
     ".": {
@@ -54,7 +45,7 @@
         {
           "type": "toml",
           "path": "uv.lock",
-          "jsonpath": "$.package[?(@.name == 'crunchy-userinit-controller')].version"
+          "jsonpath": "$.package[?(@.name.value == 'crunchy-userinit-controller')].version"
         }
       ]
     }

@@ -3,6 +3,9 @@ FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 WORKDIR /app
 
+ARG BUILD_DATE
+ARG GIT_HASH
+
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
 

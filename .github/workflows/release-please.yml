@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-
 permissions:
   issues: write
   contents: write
@@ -15,7 +14,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: googleapis/release-please-action@v4
+        if: github.event_name != 'pull_request'
+        id: release
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_TOKEN }}
           config-file: .github/release-please-config.json
           manifest-file: .github/.release-please-manifest.json
