@@ -248,7 +248,7 @@ test = [
 requires-dist = [
     { name = "asyncpg", specifier = "==0.29" },
     { name = "kopf", specifier = "==1.38.0" },
-    { name = "kubernetes-asyncio", specifier = "==29" },
+    { name = "kubernetes-asyncio", specifier = "==32.3.2" },
 ]
 
 [package.metadata.requires-dev]
@@ -417,20 +417,19 @@ wheels = [
 
 [[package]]
 name = "kubernetes-asyncio"
-version = "29.0.0"
+version = "32.3.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
     { name = "certifi" },
     { name = "python-dateutil" },
     { name = "pyyaml" },
-    { name = "setuptools" },
     { name = "six" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7f/c3/762f4236a2f85a7ac43caa3fcf193ce316e44a3c37c5a301f52dcd7300df/kubernetes_asyncio-29.0.0.tar.gz", hash = "sha256:99ff1fea4df062adb7a6e48962ad2504459165ffd7542013bc3d72d9ab3817be", size = 1080652, upload-time = "2024-01-18T22:40:39.732Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b9/74/6d454c06c44acbe2dba10aaddb87e6a8a980055308d4052aa408da280095/kubernetes_asyncio-32.3.2.tar.gz", hash = "sha256:a4b6da1dbfa16e87ab8df6898f54fa03f651591a502bd6480a647d5513a580bf", size = 1032557, upload-time = "2025-04-30T21:59:34.121Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5c/5c/b0cef8f6df697ba3fc0c4d630ec9c0a3342e7a576fea641e42064b67e568/kubernetes_asyncio-29.0.0-py3-none-any.whl", hash = "sha256:9dd911260e89d984479f23b1000b8713d35b68fbd92873473449b5558da1a3f4", size = 2005069, upload-time = "2024-01-18T22:40:37.562Z" },
+    { url = "https://files.pythonhosted.org/packages/d1/bf/8d9ae183b3bee0811f633411d3e3de4bcc58eefb81021b3e2fdcc1d1e26b/kubernetes_asyncio-32.3.2-py3-none-any.whl", hash = "sha256:3584e6358571e686ea1396fc310890263c58fa41c084a841a9609a54ad05de62", size = 1984148, upload-time = "2025-04-30T21:59:32.254Z" },
 ]
 
 [[package]]
@@ -762,15 +761,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/3e/b9/053d6445dc7544fb6594785056d8ece61daae7214859ada4a152ad56b6e0/ruff-0.12.5-py3-none-win32.whl", hash = "sha256:dfeb2627c459b0b78ca2bbdc38dd11cc9a0a88bf91db982058b26ce41714ffa9", size = 11751575, upload-time = "2025-07-24T13:26:30.835Z" },
     { url = "https://files.pythonhosted.org/packages/bc/0f/ab16e8259493137598b9149734fec2e06fdeda9837e6f634f5c4e35916da/ruff-0.12.5-py3-none-win_amd64.whl", hash = "sha256:ae0d90cf5f49466c954991b9d8b953bd093c32c27608e409ae3564c63c5306a5", size = 12882273, upload-time = "2025-07-24T13:26:32.929Z" },
     { url = "https://files.pythonhosted.org/packages/00/db/c376b0661c24cf770cb8815268190668ec1330eba8374a126ceef8c72d55/ruff-0.12.5-py3-none-win_arm64.whl", hash = "sha256:48cdbfc633de2c5c37d9f090ba3b352d1576b0015bfc3bc98eaf230275b7e805", size = 11951564, upload-time = "2025-07-24T13:26:34.994Z" },
-]
-
-[[package]]
-name = "setuptools"
-version = "80.9.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/18/5d/3bf57dcd21979b887f014ea83c24ae194cfcd12b9e0fda66b957c69d1fca/setuptools-80.9.0.tar.gz", hash = "sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c", size = 1319958, upload-time = "2025-05-27T00:56:51.443Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a3/dc/17031897dae0efacfea57dfd3a82fdd2a2aeb58e0ff71b77b87e44edc772/setuptools-80.9.0-py3-none-any.whl", hash = "sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922", size = 1201486, upload-time = "2025-05-27T00:56:49.664Z" },
 ]
 
 [[package]]
