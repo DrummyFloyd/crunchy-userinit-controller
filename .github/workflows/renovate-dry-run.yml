@@ -13,7 +13,7 @@ jobs:
       issues: read # required by renovate, because renovate to read issues.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: cybozu/renovate-dry-run-action@v2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: cybozu/renovate-dry-run-action@e4d226fe94d221fb998443e743046f2358dd694c # v2
         with:
           config-file: renovate.json
