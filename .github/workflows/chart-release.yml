@@ -3,13 +3,7 @@ name: (Chart) Release
 on:
   push:
     tags:
-      - "chart*"
-  workflow_dispatch:
-  workflow_call:
-    inputs:
-      new-tag:
-        required: true
-        type: string
+      - chart-*
 jobs:
   release:
     permissions:

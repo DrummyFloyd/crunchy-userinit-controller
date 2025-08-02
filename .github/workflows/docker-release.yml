@@ -3,18 +3,15 @@ name: (Docker) Release
 
 on:
   push:
-    tags:
-      - "v*"
-  workflow_dispatch:
-  workflow_call:
-    inputs:
-      new-tag:
-        required: true
-        type: string
+    tag:
+      - v*
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
