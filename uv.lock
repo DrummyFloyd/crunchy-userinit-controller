@@ -256,7 +256,7 @@ test = [
 requires-dist = [
     { name = "asyncpg", specifier = "==0.30.0" },
     { name = "kopf", specifier = "==1.38.0" },
-    { name = "kubernetes-asyncio", specifier = "==32.3.2" },
+    { name = "kubernetes-asyncio", specifier = "==33.3.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -425,7 +425,7 @@ wheels = [
 
 [[package]]
 name = "kubernetes-asyncio"
-version = "32.3.2"
+version = "33.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -435,9 +435,9 @@ dependencies = [
     { name = "six" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b9/74/6d454c06c44acbe2dba10aaddb87e6a8a980055308d4052aa408da280095/kubernetes_asyncio-32.3.2.tar.gz", hash = "sha256:a4b6da1dbfa16e87ab8df6898f54fa03f651591a502bd6480a647d5513a580bf", size = 1032557, upload-time = "2025-04-30T21:59:34.121Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/41/5f/c175f86b92ff5f19444e3be1423819491ae9859d1f6f7d83d404eab8b10d/kubernetes_asyncio-33.3.0.tar.gz", hash = "sha256:4c59cd4c99b197995ef38ef0c8ff45aab24b84830ebf0ddcb67355caea9674c9", size = 1124931, upload-time = "2025-08-11T21:39:37.825Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d1/bf/8d9ae183b3bee0811f633411d3e3de4bcc58eefb81021b3e2fdcc1d1e26b/kubernetes_asyncio-32.3.2-py3-none-any.whl", hash = "sha256:3584e6358571e686ea1396fc310890263c58fa41c084a841a9609a54ad05de62", size = 1984148, upload-time = "2025-04-30T21:59:32.254Z" },
+    { url = "https://files.pythonhosted.org/packages/bc/20/90985f53c141e6f3464b7295a617ffd36574168861882f9291847d09f9b1/kubernetes_asyncio-33.3.0-py3-none-any.whl", hash = "sha256:25e6e265932ebb1aeecbdb30a107dbef3ee0bcd388ed12d092be70915733982b", size = 2174591, upload-time = "2025-08-11T21:39:35.697Z" },
 ]
 
 [[package]]
