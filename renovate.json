@@ -2,10 +2,34 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", "config:best-practices"],
   "semanticCommits": "enabled",
+  "regexManagers": [
+    {
+      "fileMatch": ["^\\.python-version$"],
+      "matchStrings": ["^(?<currentValue>\\d+\\.\\d+)(?:\\.\\d+)?$"],
+      "depNameTemplate": "python",
+      "datasourceTemplate": "github-releases",
+      "lookupNameTemplate": "python/cpython",
+      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+)"
+    },
+    {
+      "fileMatch": ["^Dockerfile$"],
+      "matchStrings": ["FROM ghcr\\.io/astral-sh/uv:python(?<currentValue>\\d+\\.\\d+)"],
+      "depNameTemplate": "python",
+      "datasourceTemplate": "github-releases",
+      "lookupNameTemplate": "python/cpython",
+      "extractVersionTemplate": "^v?(?<version>\\d+\\.\\d+)"
+    }
+  ],
   "packageRules": [
     {
       "matchManagers": ["helm-values", "helmv3"],
       "enabled": false
+    },
+    {
+      "matchDatasources": ["github-releases"],
+      "matchDepNames": ["python"],
+      "groupName": "python version",
+      "groupSlug": "python-version"
     }
   ]
 }
