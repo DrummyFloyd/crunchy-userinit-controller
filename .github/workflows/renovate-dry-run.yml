@@ -2,10 +2,9 @@
 name: (Docker) Release
 
 on:
-  push:
-    pull_request:
-      paths:
-        - renovate.json
+  pull_request:
+    paths:
+      - renovate.json
 jobs:
   renovate-dry-run:
     permissions:
@@ -14,7 +13,7 @@ jobs:
       issues: read # required by renovate, because renovate to read issues.
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: cybozu/renovate-dry-run-action@v2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+      - uses: cybozu/renovate-dry-run-action@e4d226fe94d221fb998443e743046f2358dd694c # v2
         with:
           config-file: renovate.json
