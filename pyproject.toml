@@ -1,6 +1,6 @@
 [project]
 name = "crunchy-userinit-controller"
-version = "1.0.1"
+version = "1.1.0"
 description = "A simple k8s controller to assist in creating users for the crunchydata postgres operator"
 readme = "README.md"
 requires-python = ">=3.12"
