@@ -8,7 +8,7 @@
 set -euo pipefail
 
 # Configuration
-CRUNCHY_DATA_OPERATOR_VERSION="5.8.2"
+CRUNCHY_DATA_OPERATOR_VERSION="6.0.0"
 DEPLOY_PG=false         # Flag to control PostgreSQL deployment
 PG_CLUSTER="default-pg" # Default cluster name, can be overridden by command line argument
 CLUSTER_NAME="postgres-test"
