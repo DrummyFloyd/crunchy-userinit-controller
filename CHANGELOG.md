@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.1.0](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.0.1...v1.1.0) (2025-12-20)
+
+
+### Features
+
+* **deps:** update to python 3.12 ([#76](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/76)) ([a7bea17](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/a7bea17a963471f53023f9923d97d9311497ba4d))
+
+
+### Bug Fixes
+
+* **deps:** update dependency asyncpg to v0.30.0 ([#33](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/33)) ([85b53a4](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/85b53a478e5b59f8e377741a7fe682bfe4fc66d1))
+* **deps:** update dependency asyncpg to v0.31.0 ([#93](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/93)) ([97b08d9](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/97b08d9db8a8cb0b3601748f4ed89698b028106d))
+* **deps:** update dependency kopf to v1.38.0 ([#34](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/34)) ([db3172a](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/db3172a8ac476361a0dc8c6970847af4b688f965))
+* **deps:** update dependency kopf to v1.39.0 ([#97](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/97)) ([747b27a](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/747b27a146589896691315a0b212e22ffc2bac14))
+* **deps:** update dependency kopf to v1.39.1 ([#99](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/99)) ([0169a3f](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/0169a3f5624af10c6ae7724bd25636defe9bf7a2))
+* **deps:** update dependency kubernetes-asyncio to v32 ([#27](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/27)) ([f5b48eb](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/f5b48eb225bb9027a39e491e6c8aa59d2daff3db))
+* **deps:** update dependency kubernetes-asyncio to v33 ([#62](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/62)) ([de96413](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/de964136e7972aaa2a1e5fbd265d58b4824eefe3))
+
 ## [1.0.1](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.0.0...v1.0.1) (2025-07-31)
 
 
