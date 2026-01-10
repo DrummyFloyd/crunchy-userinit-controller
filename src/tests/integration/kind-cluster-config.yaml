@@ -4,7 +4,7 @@ apiVersion: kind.x-k8s.io/v1alpha4
 name: postgres-test
 nodes:
   - role: control-plane
-    image: &node kindest/node:v1.34
+    image: &node kindest/node:v1.34.3
     kubeadmConfigPatches:
       - |
         kind: InitConfiguration
