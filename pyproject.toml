@@ -9,7 +9,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
 ]
-dependencies = ["asyncpg==0.31.0", "kopf==1.40.0", "kubernetes-asyncio==33.3.0"]
+dependencies = ["asyncpg==0.31.0", "kopf==1.40.0", "kubernetes-asyncio==34.3.3"]
 
 [project.urls]
 Documentation = "https://github.com/DrummyFloyd/crunchy-userinit-controller#readme"
