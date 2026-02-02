@@ -271,7 +271,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "asyncpg", specifier = "==0.31.0" },
-    { name = "kopf", specifier = "==1.41.1" },
+    { name = "kopf", specifier = "==1.42.4" },
     { name = "kubernetes-asyncio", specifier = "==34.3.3" },
 ]
 
@@ -403,7 +403,7 @@ wheels = [
 
 [[package]]
 name = "kopf"
-version = "1.41.1"
+version = "1.42.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -412,9 +412,9 @@ dependencies = [
     { name = "python-json-logger" },
     { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/51/56/50e4326e04bb0c91e8b41bdb79a4af430a78cb017f2d3c8386cf00c8f410/kopf-1.41.1.tar.gz", hash = "sha256:fe847cfaae2ce7fe7ddcd34ef117b673c83b059da2fca38724552883da5c5ab6", size = 1197703, upload-time = "2026-01-27T21:07:13.26Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/75/8e/355cc6f5e474192e201c85c48e1e1291745cba2b60590803d518f0f8e682/kopf-1.42.4.tar.gz", hash = "sha256:e3d63182fb6599983e76c88171380f41b9b5b677fc291a6ef623b4e541da3650", size = 1212111, upload-time = "2026-02-02T13:25:04.848Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/86/60e799138f26d32e15a8b356e4b657b72a806a602f5b60ddc736d766e4f2/kopf-1.41.1-py3-none-any.whl", hash = "sha256:6bb4a0bb83bfef8db7a5950cab509021d4250a1a6247a829443bee696609044d", size = 212638, upload-time = "2026-01-27T21:07:11.855Z" },
+    { url = "https://files.pythonhosted.org/packages/db/64/e2b96a8cbca4fe15fc211966f14d3bcf3fca78351eb6a8128a6cc0efdea2/kopf-1.42.4-py3-none-any.whl", hash = "sha256:23bd939f1f5f0078665b313b3e7b6a78ad43a3f16fa3a76e7e38fbe0509c1506", size = 216214, upload-time = "2026-02-02T13:25:02.191Z" },
 ]
 
 [[package]]
