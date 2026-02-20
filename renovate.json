@@ -11,6 +11,11 @@
       "matchUpdateTypes": ["pinDigest", "patch"],
       "automerge": true,
       "automergeType": "pr"
+    },
+    {
+      "matchUpdateTypes": ["pinDigest"],
+      "matchFileNames": [".github/workflows/**"],
+      "groupName": "GitHub Actions pinDigest"
     }
   ]
 }
