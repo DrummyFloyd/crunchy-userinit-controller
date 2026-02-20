@@ -6,6 +6,11 @@
     {
       "matchManagers": ["helm-values", "helmv3"],
       "enabled": false
+    },
+    {
+      "matchUpdateTypes": ["pinDigest", "patch"],
+      "automerge": true,
+      "automergeType": "pr"
     }
   ]
 }
