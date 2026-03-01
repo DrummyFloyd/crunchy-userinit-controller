@@ -2,6 +2,7 @@ import kopf
 from kubernetes_asyncio import config
 
 from .config import (
+    CRUI_DISABLE_CLUSTER_SCOPE,
     DEV_MODE,
     K8S_API_NS,
     K8S_API_NS_DEPRECATED,
@@ -18,6 +19,7 @@ from .models import PgUserSecret
 async def configure(settings: kopf.OperatorSettings, **_):
     # INFO: Lines 20-27: tested with pytest.marker.integration
     settings.peering.standalone = True
+    settings.scanning.disabled = CRUI_DISABLE_CLUSTER_SCOPE
     settings.persistence.diffbase_storage = kopf.AnnotationsDiffBaseStorage(
         prefix=K8S_API_NS, key="last-handled-configuration", v1=False
     )
