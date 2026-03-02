@@ -51,3 +51,13 @@ class TestEnvironmentConfiguration:
 
         importlib.reload(config_module)
         assert config_module.CRUI_DISABLE_CLUSTER_SCOPE is True
+
+    @patch.dict("os.environ", {"CRUI_DISABLE_CLUSTER_SCOPE": "false"})
+    def test_disable_cluster_scope_falsy(self):
+        # Test CRUI_DISABLE_CLUSTER_SCOPE with a falsy value
+        import importlib
+
+        from userinit import config as config_module
+
+        importlib.reload(config_module)
+        assert config_module.CRUI_DISABLE_CLUSTER_SCOPE is False
