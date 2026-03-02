@@ -2,7 +2,7 @@ apiVersion: v2
 name: crunchy-userinit-controller
 description: Installs crunchy-userinit-controller
 type: application
-version: 1.0.3
+version: 1.0.4
 appVersion: 1.1.2
 maintainers:
   - name: drummyfloyd
