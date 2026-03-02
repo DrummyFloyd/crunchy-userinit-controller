@@ -45,8 +45,10 @@ spec:
               path: /healthz
               port: 8080
           {{- end }}
-            {{- with .Values.extraEnv }}
           env:
+            - name: CRUI_DISABLE_CLUSTER_SCOPE
+              value: {{ eq .Values.watch.mode "current" | ternary "true" "false" | quote }}
+            {{- with .Values.extraEnv }}
               {{- . | toYaml | nindent 12 }}
             {{- end }}
           resources:

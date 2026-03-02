@@ -32,6 +32,9 @@ should match snapshot with default values:
                 - --log-format=plain
                 - --liveness=http://0.0.0.0:8080/healthz
                 - --namespace=test-ns
+              env:
+                - name: CRUI_DISABLE_CLUSTER_SCOPE
+                  value: "true"
               image: ghcr.io/drummyfloyd/crunchy-userinit-controller:0.0.0
               imagePullPolicy: IfNotPresent
               livenessProbe:
