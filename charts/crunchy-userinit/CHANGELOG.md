@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.4](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-1.0.3...chart-1.0.4) (2026-03-02)
+
+
+### Bug Fixes
+
+* **namespace-scope:** disable scanning on kopf startup ([#135](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/135)) ([3cb1ad7](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/3cb1ad772c0637b09983f1c69e275bc3e1c6d317))
+
+
+### Chores
+
+* **main:** release 1.1.2 ([#132](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/132)) ([7638ba8](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/7638ba8072bdc6f529a1c9fab29a5a67d3e4ed54))
+
 ## [1.0.3](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-1.0.2...chart-1.0.3) (2026-02-20)
 
 
