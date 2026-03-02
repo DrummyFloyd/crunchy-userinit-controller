@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.1.1...v1.1.2) (2026-03-02)
+
+
+### Bug Fixes
+
+* **deps:** update dependency kubernetes-asyncio to v35.0.1 ([#131](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/131)) ([f85c524](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/f85c5241464ca14fc33131aaf22f9a4f075658df))
+* **namespace-scope:** disable scanning on kopf startup ([#135](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/135)) ([3cb1ad7](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/3cb1ad772c0637b09983f1c69e275bc3e1c6d317))
+
 ## [1.1.1](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.1.0...v1.1.1) (2026-02-20)
 
 
