@@ -346,6 +346,11 @@ tests:
             - --log-format=plain
             - --liveness=http://0.0.0.0:8080/healthz
             - --all-namespaces
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: CRUI_DISABLE_CLUSTER_SCOPE
+              value: "false"
   - it: should set list namespaces
     set:
       watch:
@@ -361,6 +366,11 @@ tests:
             - --liveness=http://0.0.0.0:8080/healthz
             - --namespace=random
             - --namespace=pr-*
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: CRUI_DISABLE_CLUSTER_SCOPE
+              value: "false"
   - it: should set debug mode
     set:
       log:
@@ -373,3 +383,13 @@ tests:
             - --debug
             - --liveness=http://0.0.0.0:8080/healthz
             - --namespace=test-ns
+  - it: should set correct disable CRUI scanning
+    set:
+      watch:
+        mode: current
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].env
+          value:
+            - name: CRUI_DISABLE_CLUSTER_SCOPE
+              value: "true"

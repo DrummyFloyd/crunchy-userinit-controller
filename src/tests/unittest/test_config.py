@@ -41,3 +41,13 @@ class TestEnvironmentConfiguration:
 
         importlib.reload(config_module)
         assert config_module.CRUI_WATCH_NAMESPACE == "custom-namespace"
+
+    @patch.dict("os.environ", {"CRUI_DISABLE_CLUSTER_SCOPE": "y"})
+    def test_disable_cluster_scope_truthy(self):
+        # Test CRUI_DISABLE_CLUSTER_SCOPE with a truthy value
+        import importlib
+
+        from userinit import config as config_module
+
+        importlib.reload(config_module)
+        assert config_module.CRUI_DISABLE_CLUSTER_SCOPE is True

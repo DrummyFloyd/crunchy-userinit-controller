@@ -20,14 +20,17 @@ LABELS_MATCH_DEPRECATED = {
     "postgres-operator.crunchydata.com/role": "pguser",
     LABEL_ENABLED_DEPRECATED: "true",
 }
-CRUI_WATCH_NAMESPACE = os.environ.get("CRUI_WATCH_NAMESPACE", "default")
-
 truthy = (
     "true",
     "1",
     "yes",
     "on",
     "y",
+)
+
+CRUI_WATCH_NAMESPACE = os.environ.get("CRUI_WATCH_NAMESPACE", "default")
+CRUI_DISABLE_CLUSTER_SCOPE = (
+    os.environ.get("CRUI_DISABLE_CLUSTER_SCOPE", "false").lower() in truthy
 )
 
 DEV_MODE = os.environ.get("DEV_MODE", "false").lower() in truthy
