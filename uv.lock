@@ -271,7 +271,7 @@ test = [
 [package.metadata]
 requires-dist = [
     { name = "asyncpg", specifier = "==0.31.0" },
-    { name = "kopf", specifier = "==1.43.0" },
+    { name = "kopf", specifier = "==1.44.0" },
     { name = "kubernetes-asyncio", specifier = "==35.0.1" },
 ]
 
@@ -402,19 +402,41 @@ wheels = [
 ]
 
 [[package]]
+name = "jsonpatch"
+version = "1.33"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jsonpointer" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/42/78/18813351fe5d63acad16aec57f94ec2b70a09e53ca98145589e185423873/jsonpatch-1.33.tar.gz", hash = "sha256:9fcd4009c41e6d12348b4a0ff2563ba56a2923a7dfee731d004e212e1ee5030c", size = 21699, upload-time = "2023-06-26T12:07:29.144Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/73/07/02e16ed01e04a374e644b575638ec7987ae846d25ad97bcc9945a3ee4b0e/jsonpatch-1.33-py2.py3-none-any.whl", hash = "sha256:0ae28c0cd062bbd8b8ecc26d7d164fbbea9652a1a3693f3b956c1eae5145dade", size = 12898, upload-time = "2023-06-16T21:01:28.466Z" },
+]
+
+[[package]]
+name = "jsonpointer"
+version = "3.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/6a/0a/eebeb1fa92507ea94016a2a790b93c2ae41a7e18778f85471dc54475ed25/jsonpointer-3.0.0.tar.gz", hash = "sha256:2b2d729f2091522d61c3b31f82e11870f60b68f43fbc705cb76bf4b832af59ef", size = 9114, upload-time = "2024-06-10T19:24:42.462Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/71/92/5e77f98553e9e75130c78900d000368476aed74276eb8ae8796f65f00918/jsonpointer-3.0.0-py2.py3-none-any.whl", hash = "sha256:13e088adc14fca8b6aa8177c044e12701e6ad4b28ff10e65f2267a90109c9942", size = 7595, upload-time = "2024-06-10T19:24:40.698Z" },
+]
+
+[[package]]
 name = "kopf"
-version = "1.43.0"
+version = "1.44.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
     { name = "click" },
     { name = "iso8601" },
+    { name = "jsonpatch" },
     { name = "python-json-logger" },
     { name = "pyyaml" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/db/d4/b74dde78176a0e3e2fed5caeabc753ecb56832f347c3b0802e7475801ff8/kopf-1.43.0.tar.gz", hash = "sha256:063058a4dc9960072b9b2512b3645e27955e3ae44c753ae69beeeea8ec9662e7", size = 1221959, upload-time = "2026-02-12T19:57:34.272Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c1/c2/aaeba48966bfe8dfac282646cf8c655dbe96051fd7af6f583caa5e93e5f6/kopf-1.44.0.tar.gz", hash = "sha256:c66867378d8c94e3e054804cd91c5ad0af6966c1b89d7970227948467b076d10", size = 1238699, upload-time = "2026-03-14T15:43:21.386Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8f/af/3de6de1a48119fa0b45dfa8c846d51b6fab0ebbf1e811766545ccedf93ea/kopf-1.43.0-py3-none-any.whl", hash = "sha256:c601d29c317d381bbed6a0df9459d731a4ebb403e58f6998e753b76d4908bc6b", size = 216652, upload-time = "2026-02-12T19:57:32.423Z" },
+    { url = "https://files.pythonhosted.org/packages/67/1b/56c31aa5b73f272c366fb33058d7f928f8483a8ea878969e3e02a2c108f5/kopf-1.44.0-py3-none-any.whl", hash = "sha256:ae4e208343eeec3c0c7284de10262594428d32ad120faebfaea0c56aaa9a53c2", size = 220427, upload-time = "2026-03-14T15:43:19.486Z" },
 ]
 
 [[package]]
