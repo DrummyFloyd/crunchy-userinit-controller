@@ -3,7 +3,7 @@ helm = "4.1.4"
 helm-docs = "1.14.2"
 kind = "0.31.0"
 kubectl = "1.35.4"
-uv = "0.11.6"
+uv = "0.11.7"
 
 [settings]
 idiomatic_version_file_enable_tools = []
