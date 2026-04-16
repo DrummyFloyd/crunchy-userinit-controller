@@ -2,7 +2,7 @@
 helm = "4.1.4"
 helm-docs = "1.14.2"
 kind = "0.31.0"
-kubectl = "1.35.3"
+kubectl = "1.35.4"
 uv = "0.11.6"
 
 [settings]
