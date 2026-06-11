@@ -30,7 +30,9 @@ Installs crunchy-userinit-controller
 | image.repository | string | `"ghcr.io/drummyfloyd/crunchy-userinit-controller"` | Container image repository |
 | image.tag | string | `""` | Container image tag (immutable tags are recommended) |
 | imagePullSecrets | list | `[]` | Specify docker-registry secret names as an array |
+| livenessProbe.bindAddress | string | `"0.0.0.0"` | Address the controller's liveness HTTP server binds to. Use "0.0.0.0" for IPv4-only clusters (default). Use "::" for dual-stack or IPv6-only clusters: on Linux this also accepts IPv4 connections unless IPv6 is disabled at the OS/kernel level. |
 | livenessProbe.enabled | bool | `true` | Enabled livenessProbe |
+| livenessProbe.port | int | `8080` | Port used by the controller's liveness HTTP server and probe |
 | log.debug | bool | `false` | Enable debug mode |
 | log.format | string | `"plain"` | Log format of the controller (plain|full|json) |
 | nameOverride | string | `""` | String to partially override crunchy-userinit-controller.fullname template |

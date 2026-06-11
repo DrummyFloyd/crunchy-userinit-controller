@@ -79,6 +79,32 @@ tests:
               path: /healthz
               port: 8080
 
+  - it: should bind liveness probe to dual-stack/IPv6 address
+    set:
+      livenessProbe:
+        enabled: true
+        bindAddress: "::"
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: --liveness=http://[::]:8080/healthz
+
+  - it: should use custom liveness probe port
+    set:
+      livenessProbe:
+        enabled: true
+        port: 9090
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].args
+          content: --liveness=http://0.0.0.0:9090/healthz
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe
+          value:
+            httpGet:
+              path: /healthz
+              port: 9090
+
   - it: should use custom image tag when specified
     set:
       image:
@@ -335,6 +361,9 @@ tests:
           value:
             - --log-format=plain
             - --namespace=test-ns
+      - notExists:
+          path: spec.template.spec.container[0].livenessProbe
+
   - it: should set all namespace
     set:
       watch:
