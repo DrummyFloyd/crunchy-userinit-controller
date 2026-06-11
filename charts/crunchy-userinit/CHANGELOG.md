@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.5](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-1.0.4...chart-1.0.5) (2026-06-11)
+
+
+### Bug Fixes
+
+* **charts:** allow custom livenessProbe ([#182](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/182)) ([cfca3ae](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/cfca3aedae9959c2b9892f9e15381d94101ec094))
+
+
+### Chores
+
+* **main:** release 1.1.3 ([#152](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/152)) ([01a3ba3](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/01a3ba3b9efd43d0a2f0509794799b363bddc728))
+
 ## [1.0.4](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-1.0.3...chart-1.0.4) (2026-03-02)
 
 
