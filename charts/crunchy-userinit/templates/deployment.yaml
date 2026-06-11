@@ -39,11 +39,11 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             {{- include "crunchy-userinit.deploymentArgs" . | nindent 12 }}
-          {{- if .Values.livenessProbe}}
+          {{- if .Values.livenessProbe.enabled }}
           livenessProbe:
             httpGet:
               path: /healthz
-              port: 8080
+              port: {{ .Values.livenessProbe.port }}
           {{- end }}
           env:
             - name: CRUI_DISABLE_CLUSTER_SCOPE

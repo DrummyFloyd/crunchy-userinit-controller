@@ -114,6 +114,19 @@ Validate watch configuration
 {{- end -}}
 
 {{/*
+Format the liveness probe bind address for use in a URL.
+IPv6 addresses must be wrapped in brackets (e.g. "::" -> "[::]").
+*/}}
+{{- define "crunchy-userinit.livenessBindHost" -}}
+{{- $addr := .Values.livenessProbe.bindAddress -}}
+{{- if and (contains ":" $addr) (not (hasPrefix "[" $addr)) -}}
+{{- printf "[%s]" $addr -}}
+{{- else -}}
+{{- $addr -}}
+{{- end -}}
+{{- end -}}
+
+{{/*
 Generate deployment args
 */}}
 {{- define "crunchy-userinit.deploymentArgs" -}}
@@ -122,7 +135,7 @@ Generate deployment args
 - --debug
 {{- end }}
 {{- if .Values.livenessProbe.enabled }}
-- --liveness=http://0.0.0.0:8080/healthz
+- --liveness=http://{{ include "crunchy-userinit.livenessBindHost" . }}:{{ .Values.livenessProbe.port }}/healthz
 {{- end }}
 {{- if eq .Values.watch.mode "all" }}
 - --all-namespaces
