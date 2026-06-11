@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.3](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.1.2...v1.1.3) (2026-06-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency kopf to v1.44.0 ([#151](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/151)) ([5a49f69](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/5a49f696e10edcc011705b72cf808fb8e639ca49))
+* **deps:** update dependency kopf to v1.44.1 ([#154](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/154)) ([8cf3299](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/8cf32997098ca17fa482936125746f2466732194))
+* **deps:** update dependency kopf to v1.44.2 ([#156](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/156)) ([e91ae08](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/e91ae0895a8f8026d25ee50ed95dc49285ead417))
+* **deps:** update dependency kopf to v1.44.3 ([#159](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/159)) ([76de00a](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/76de00aebb073d5ad305ba9e1989fcf66d3c5348))
+* **deps:** update dependency kopf to v1.44.4 ([#162](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/162)) ([29b948e](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/29b948eb317b5645a807cf82e4e0748d7b684638))
+* **deps:** update dependency kopf to v1.44.5 ([#164](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/164)) ([453dd02](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/453dd02dc223dd02d205068c6c4545d1e2e192b9))
+
 ## [1.1.2](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.1.1...v1.1.2) (2026-03-02)
 
 
