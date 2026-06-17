@@ -8,14 +8,16 @@
       "enabled": false
     },
     {
-      "matchUpdateTypes": ["pinDigest", "patch"],
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["patch", "minor", "pinDigest"],
       "automerge": true,
-      "automergeType": "pr"
+      "platformAutomerge": true
     },
     {
-      "matchUpdateTypes": ["pinDigest"],
-      "matchFileNames": [".github/workflows/**"],
-      "groupName": "GitHub Actions pinDigest"
+      "matchUpdateTypes": ["patch", "pinDigest"],
+      "excludeManagers": ["github-actions"],
+      "automerge": true,
+      "platformAutomerge": true
     }
   ]
 }
