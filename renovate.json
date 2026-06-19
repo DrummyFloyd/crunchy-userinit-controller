@@ -15,7 +15,6 @@
     },
     {
       "matchUpdateTypes": ["patch", "pinDigest"],
-      "excludeManagers": ["github-actions"],
       "automerge": true,
       "platformAutomerge": true
     }
