@@ -21,7 +21,7 @@
     {
       "matchManagers": ["dockerfile"],
       "matchPackageNames": ["ghcr.io/astral-sh/uv"],
-      "versioning": "regex:^python(?<major>\\d+)\\.(?<minor>\\d+)-bookworm-slim$",
+      "versioning": "regex:^python(?<major>\\d+)\\.(?<minor>\\d+)-alpine$",
       "groupName": "python"
     },
     {
