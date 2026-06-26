@@ -15,6 +15,16 @@
       "platformAutomerge": true
     },
     {
+      "matchManagers": ["pep621", "uv", "pyenv"],
+      "groupName": "python"
+    },
+    {
+      "matchManagers": ["dockerfile"],
+      "matchPackageNames": ["ghcr.io/astral-sh/uv"],
+      "versioning": "regex:^python(?<major>\\d+)\\.(?<minor>\\d+)-bookworm-slim$",
+      "groupName": "python"
+    },
+    {
       "matchUpdateTypes": ["patch", "pinDigest"],
       "automerge": true,
       "platformAutomerge": true
