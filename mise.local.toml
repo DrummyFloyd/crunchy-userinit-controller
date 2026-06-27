@@ -1,5 +1,5 @@
 [tools]
-helm = "4.1.4"
+helm = "4.2.2"
 helm-docs = "1.14.2"
 kind = "0.32.0"
 kubectl = "1.36.2"
