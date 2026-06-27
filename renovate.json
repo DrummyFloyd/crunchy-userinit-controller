@@ -9,7 +9,7 @@
     },
     {
       "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["patch", "minor", "pinDigest"],
+      "matchUpdateTypes": ["patch", "minor", "digest", "pinDigest"],
       "groupName": "github-actions",
       "automerge": true,
       "platformAutomerge": true
