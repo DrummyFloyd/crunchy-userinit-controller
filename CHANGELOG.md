@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.4](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.1.3...v1.1.4) (2026-06-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency kopf to v1.44.6 ([#191](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/191)) ([1431667](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/1431667a27bd911503c2f20967ffcbe3b6ecf6ba))
+* **deps:** update dependency kubernetes-asyncio to v36 ([#200](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/200)) ([25dda14](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/25dda148882aa293582aa98a8d6dade7a848d9e1))
+
 ## [1.1.3](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.1.2...v1.1.3) (2026-06-11)
 
 
