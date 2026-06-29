@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.6](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-1.0.5...chart-1.0.6) (2026-06-29)
+
+
+### Chores
+
+* **deps:** lock file maintenance ([#211](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/211)) ([02928a2](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/02928a267b542fc151129f6d06830ecb2e33eb67))
+* **main:** release 1.1.4 ([#193](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/193)) ([3cf384e](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/3cf384e48f7f773c4e7f232aab3d06ac538ad35e))
+
 ## [1.0.5](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-1.0.4...chart-1.0.5) (2026-06-11)
 
 
