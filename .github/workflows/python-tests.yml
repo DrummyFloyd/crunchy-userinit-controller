@@ -46,7 +46,7 @@ jobs:
 
       - name: Pytest coverage comment
         if: github.event_name == 'pull_request'
-        uses: MishaKav/pytest-coverage-comment@a15368f7bcf5ea0d1e05eb03375d8866ea85f5f2 # main
+        uses: MishaKav/pytest-coverage-comment@4a4889e6085d4e19fd19bf4a763c83d5332c8d06 # main
         with:
           junitxml-path: .coverage/junit.xml
           title: Coverage Report
