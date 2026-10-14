@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 # Import the main userinit handler
 from userinit.userinit import (
+    CredentialFreeDiffBaseStorage,
     on_cluster_event,
     on_deprecated_labels,
     on_pguser_secret_created,
@@ -284,3 +285,22 @@ class TestDeprecatedLabels:
 
         with pytest.raises(kopf.PermanentError):
             await on_deprecated_labels(body=deprecated_secret_body)
+
+
+@pytest.mark.unit
+class TestCredentialFreeDiffBaseStorage:
+    """Test the diff-base stored as an annotation on pguser secrets."""
+
+    def test_build_drops_credentials(self, mock_k8s_secret):
+        storage = CredentialFreeDiffBaseStorage(
+            prefix="crunchy-userinit.drummyfloyd.github.com",
+            key="last-handled-configuration",
+            v1=False,
+        )
+        secret = mock_k8s_secret()
+
+        essence = storage.build(body=kopf.Body(secret._dict))
+
+        # Only what the handler reads is tracked: no password, verifier or URI
+        assert set(essence["data"]) == {"dbname", "user"}
+        assert essence["metadata"]["labels"] == secret._dict["metadata"]["labels"]

@@ -19,13 +19,32 @@ from .connections import ConnectionManager
 from .database import DatabaseManager
 from .models import PgUserSecret, selects
 
+# The only secret data the handler reads: changes to them must still trigger it
+TRACKED_DATA_KEYS = ("dbname", "user")
+
+
+class CredentialFreeDiffBaseStorage(kopf.AnnotationsDiffBaseStorage):
+    """Diff-base annotation without the pguser credentials.
+
+    kopf stores the whole object as last-handled-configuration, so the password,
+    verifier and URIs of the secret were copied in clear into an annotation.
+    """
+
+    def build(self, *, body, extra_fields=None):
+        essence = super().build(body=body, extra_fields=extra_fields)
+        if "data" in essence:
+            essence["data"] = {
+                k: v for k, v in essence["data"].items() if k in TRACKED_DATA_KEYS
+            }
+        return essence
+
 
 @kopf.on.startup(id="crui-startup")
 async def configure(settings: kopf.OperatorSettings, **_):
     # INFO: Lines 20-27: tested with pytest.marker.integration
     settings.peering.standalone = True
     settings.scanning.disabled = CRUI_DISABLE_CLUSTER_SCOPE
-    settings.persistence.diffbase_storage = kopf.AnnotationsDiffBaseStorage(
+    settings.persistence.diffbase_storage = CredentialFreeDiffBaseStorage(
         prefix=K8S_API_NS, key="last-handled-configuration", v1=False
     )
     if DEV_MODE:
