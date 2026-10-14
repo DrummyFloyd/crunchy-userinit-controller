@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.2.0...v1.2.1) (2026-10-14)
+
+
+### Bug Fixes
+
+* do not re-run all pguser secrets on the first opt-in observation ([#301](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/301)) ([976673b](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/976673b812a439b9eb310e9a9a3885413eff5283))
+
 ## [1.2.0](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.1.4...v1.2.0) (2026-10-14)
 
 
