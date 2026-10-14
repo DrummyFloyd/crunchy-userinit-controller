@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.1.4...v1.2.0) (2026-10-14)
+
+
+### Features
+
+* opt-in pgbouncer CONNECT and public schema grants per user ([#296](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/296)) ([7975d41](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/7975d41971c3fcbb6e8382241beddb47433951b9)), closes [#20](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/20)
+* report applied and failed grants as events on the PostgresCluster ([#300](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/300)) ([2bd8846](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/2bd8846230f7d3b3acdd32e5de908d0e169cd046))
+
+
+### Bug Fixes
+
+* keep pguser credentials out of the diff-base annotation ([#299](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/299)) ([2f4ced6](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/2f4ced655ee031e457ef6ed15cc6483caf4ec6e9))
+
 ## [1.1.4](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.1.3...v1.1.4) (2026-06-29)
 
 
