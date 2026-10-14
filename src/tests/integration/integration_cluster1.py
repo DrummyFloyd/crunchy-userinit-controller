@@ -1,4 +1,5 @@
 # INFO: https://github.com/nolar/kopf/blob/main/examples/09-testing/test_example_09.py
+import json
 import os
 import subprocess
 import sys
@@ -212,3 +213,8 @@ class IntegrationWithCluster1:
             "crunchy-userinit.ramblurr.github.com" in key
             for key in current_secret.metadata.annotations
         )
+        # The diff-base annotation keeps no credentials
+        diffbase = current_secret.metadata.annotations[
+            "crunchy-userinit.drummyfloyd.github.com/last-handled-configuration"
+        ]
+        assert set(json.loads(diffbase)["data"]) == {"dbname", "user"}
