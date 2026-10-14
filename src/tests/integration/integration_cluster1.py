@@ -221,6 +221,8 @@ class IntegrationWithCluster1:
         assert "running in dev mode" in output
         assert "current owner of user2_main is user2. nothing to do." in output
         assert "current owner of user1_main is user1. nothing to do." in output
+        # A restart only resumes the secrets: the opt-in handler does not run them again
+        assert "opt-in annotations changed" not in output
         assert not any(
             "crunchy-userinit.ramblurr.github.com" in key
             for key in current_secret.metadata.annotations
