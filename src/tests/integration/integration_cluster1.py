@@ -175,6 +175,8 @@ class IntegrationWithCluster1:
             "ALL on schema public of database user2_main to user2",
             "CONNECT on database user1_main to _crunchypgbouncer",
         ]
+        # Posted as the controller, not as the framework
+        assert {e.source.component for e in events.items} == {"crunchy-userinit"}
 
     def test_on_resume(self):
         """Test the controller's behavior when is restarted."""

@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 # Import the main userinit handler
 from userinit.userinit import (
     CredentialFreeDiffBaseStorage,
+    configure,
     on_cluster_event,
     on_deprecated_labels,
     on_pguser_secret_created,
@@ -370,3 +371,21 @@ class TestCredentialFreeDiffBaseStorage:
         # Only what the handler reads is tracked: no password, verifier or URI
         assert set(essence["data"]) == {"dbname", "user"}
         assert essence["metadata"]["labels"] == secret._dict["metadata"]["labels"]
+
+
+@pytest.mark.unit
+class TestConfigure:
+    """Test the operator settings."""
+
+    @pytest.mark.asyncio
+    @patch("userinit.userinit.DEV_MODE", True)
+    @patch("userinit.userinit.config.load_kube_config", AsyncMock())
+    async def test_events_posted_as_the_controller(self, env_vars):
+        env_vars(HOSTNAME="crunchy-userinit-abc12")
+        settings = kopf.OperatorSettings()
+
+        await configure(settings=settings)
+
+        assert settings.posting.reporting_component == "crunchy-userinit"
+        assert settings.posting.reporting_instance == "crunchy-userinit-abc12"
+        assert settings.posting.event_name_prefix == "crunchy-userinit-"

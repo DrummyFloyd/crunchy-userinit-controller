@@ -1,9 +1,12 @@
+import os
+
 import kopf
 from kubernetes_asyncio import config
 
 from .config import (
     ANNOTATION_PGBOUNCER_CONNECT,
     ANNOTATION_PUBLIC_SCHEMA,
+    APP_NAME,
     CRUI_DISABLE_CLUSTER_SCOPE,
     DEV_MODE,
     K8S_API_NS,
@@ -48,6 +51,10 @@ async def configure(settings: kopf.OperatorSettings, **_):
     settings.persistence.diffbase_storage = CredentialFreeDiffBaseStorage(
         prefix=K8S_API_NS, key="last-handled-configuration", v1=False
     )
+    # Events show the controller, not the framework ("From" in kubectl describe)
+    settings.posting.reporting_component = APP_NAME
+    settings.posting.reporting_instance = os.environ.get("HOSTNAME", APP_NAME)
+    settings.posting.event_name_prefix = f"{APP_NAME}-"
     if DEV_MODE:
         logger.warning("running in dev mode")
         _ = await config.load_kube_config()
