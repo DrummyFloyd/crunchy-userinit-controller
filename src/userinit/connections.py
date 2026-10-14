@@ -3,12 +3,41 @@ import kopf
 from kubernetes_asyncio import client
 from kubernetes_asyncio.client.api_client import ApiClient
 
-from .config import DEV_MODE
+from .config import DEV_MODE, LABELS_MATCH, PGO_GROUP, PGO_PLURAL, PGO_VERSION
 from .models import decode_value
 
 
 class ConnectionManager:
     """Handles database connections"""
+
+    @staticmethod
+    async def get_cluster_annotations(
+        cluster_ns: str, cluster_name: str
+    ) -> dict[str, str]:
+        """Read the annotations of the PostgresCluster (opt-in grants live there)"""
+        async with ApiClient() as api:
+            custom = client.CustomObjectsApi(api)
+            cluster = await custom.get_namespaced_custom_object(
+                PGO_GROUP, PGO_VERSION, cluster_ns, PGO_PLURAL, cluster_name
+            )
+        return cluster.get("metadata", {}).get("annotations") or {}
+
+    @staticmethod
+    async def list_pguser_secrets(cluster_ns: str, cluster_name: str) -> list[dict]:
+        """List the pguser secrets of a PostgresCluster, as raw dicts"""
+        selector = ",".join(
+            f"{key}={value}"
+            for key, value in {
+                **LABELS_MATCH,
+                f"{PGO_GROUP}/cluster": cluster_name,
+            }.items()
+        )
+        async with ApiClient() as api:
+            v1 = client.CoreV1Api(api)
+            secrets = await v1.list_namespaced_secret(
+                cluster_ns, label_selector=selector
+            )
+            return [api.sanitize_for_serialization(s) for s in secrets.items]
 
     @staticmethod
     async def get_superuser_uri(
@@ -57,7 +86,10 @@ class ConnectionManager:
 
     @staticmethod
     async def open_cluster_connection(
-        cluster_ns: str, cluster_name: str, superuser_name: str
+        cluster_ns: str,
+        cluster_name: str,
+        superuser_name: str,
+        database: str | None = None,
     ) -> asyncpg.Connection:
         """Open a database connection using superuser credentials.
 
@@ -68,6 +100,7 @@ class ConnectionManager:
             cluster_ns: The namespace where the database cluster is deployed
             cluster_name: The name of the database cluster
             superuser_name: The name of the superuser to connect with
+            database: Database to connect to instead of the superuser's one
 
         Returns:
             asyncpg.Connection: An established database connection
@@ -80,7 +113,7 @@ class ConnectionManager:
             cluster_ns, cluster_name, superuser_name
         )
         try:
-            return await asyncpg.connect(uri)
+            return await asyncpg.connect(uri, database=database)
         except Exception as e:
             raise kopf.TemporaryError(
                 f"Cannot connect to the database cluster={cluster_name} ns={cluster_ns} superuser={superuser_name}, e={e}",

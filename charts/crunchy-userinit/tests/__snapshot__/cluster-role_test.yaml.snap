@@ -35,6 +35,14 @@ should create clusterRole with watch.mode=all:
           - get
           - list
           - watch
+      - apiGroups:
+          - postgres-operator.crunchydata.com
+        resources:
+          - postgresclusters
+        verbs:
+          - get
+          - list
+          - watch
   2: |
     apiVersion: rbac.authorization.k8s.io/v1
     kind: ClusterRoleBinding

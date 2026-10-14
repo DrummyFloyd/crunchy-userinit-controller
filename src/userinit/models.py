@@ -54,6 +54,14 @@ class PgUserSecret:
         return cls(secret_name, cluster_name, cluster_ns, superuser, dbname, role_name)
 
 
+def selects(value: str | None, role_name: str) -> bool:
+    """Whether an opt-in annotation (comma-separated users, or "*") selects the role"""
+    if not value:
+        return False
+    names = {name.strip() for name in value.split(",")}
+    return "*" in names or role_name in names
+
+
 def decode_value(v: str) -> str | None:
     """Decode base64 value from Kubernetes secret"""
     if not v:

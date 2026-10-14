@@ -43,6 +43,11 @@ spec:
               postgres-operator.crunchydata.com/cluster: *name
               postgres-operator.crunchydata.com/data: postgres
 
+  # _crunchypgbouncer only exists with PgBouncer: needed by the pgbouncer-connect test
+  proxy:
+    pgBouncer:
+      replicas: 1
+
   users:
     # Superuser
     - name: postgres

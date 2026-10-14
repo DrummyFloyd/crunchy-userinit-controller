@@ -12,6 +12,14 @@ LABEL_ENABLED = f"{K8S_API_NS}/enabled"
 LABEL_ENABLED_DEPRECATED = f"{K8S_API_NS_DEPRECATED}/enabled"
 LABEL_SUPERUSER = f"{K8S_API_NS}/superuser"
 ANNOTATION_MIGRATED = f"{K8S_API_NS}/migrated"
+# Opt-in grants, set on the PostgresCluster metadata: comma-separated users or "*"
+ANNOTATION_PGBOUNCER_CONNECT = f"{K8S_API_NS}/pgbouncer-connect"
+ANNOTATION_PUBLIC_SCHEMA = f"{K8S_API_NS}/public-schema"
+# PgBouncer auth_user created by the postgres-operator
+PGBOUNCER_ROLE = "_crunchypgbouncer"
+PGO_GROUP = "postgres-operator.crunchydata.com"
+PGO_VERSION = "v1beta1"
+PGO_PLURAL = "postgresclusters"
 LABELS_MATCH = {
     "postgres-operator.crunchydata.com/role": "pguser",
     LABEL_ENABLED: "true",
