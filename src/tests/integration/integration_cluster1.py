@@ -165,6 +165,18 @@ class IntegrationWithCluster1:
             )
             == "f"
         )
+        # Each grant actually run is reported on the PostgresCluster
+        events = client.CoreV1Api().list_namespaced_event(
+            YAML_FILE,
+            field_selector=f"involvedObject.kind=PostgresCluster,involvedObject.name={YAML_FILE},reason=GrantApplied",
+        )
+        messages = sorted(e.message for e in events.items)
+        assert messages == [
+            "ALL on schema public of database user2_main to user2",
+            "CONNECT on database user1_main to _crunchypgbouncer",
+        ]
+        # Posted as the controller, not as the framework
+        assert {e.source.component for e in events.items} == {"crunchy-userinit"}
 
     def test_on_resume(self):
         """Test the controller's behavior when is restarted."""

@@ -11,16 +11,13 @@ class ConnectionManager:
     """Handles database connections"""
 
     @staticmethod
-    async def get_cluster_annotations(
-        cluster_ns: str, cluster_name: str
-    ) -> dict[str, str]:
-        """Read the annotations of the PostgresCluster (opt-in grants live there)"""
+    async def get_cluster(cluster_ns: str, cluster_name: str) -> dict:
+        """Read the PostgresCluster: opt-in annotations, events target"""
         async with ApiClient() as api:
             custom = client.CustomObjectsApi(api)
-            cluster = await custom.get_namespaced_custom_object(
+            return await custom.get_namespaced_custom_object(
                 PGO_GROUP, PGO_VERSION, cluster_ns, PGO_PLURAL, cluster_name
             )
-        return cluster.get("metadata", {}).get("annotations") or {}
 
     @staticmethod
     async def list_pguser_secrets(cluster_ns: str, cluster_name: str) -> list[dict]:

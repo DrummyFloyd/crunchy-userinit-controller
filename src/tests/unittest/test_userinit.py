@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 # Import the main userinit handler
 from userinit.userinit import (
     CredentialFreeDiffBaseStorage,
+    configure,
     on_cluster_event,
     on_deprecated_labels,
     on_pguser_secret_created,
@@ -23,19 +24,47 @@ OPT_IN_ALL = {
 }
 
 
+def cluster(annotations: dict) -> dict:
+    """PostgresCluster as returned by ConnectionManager.get_cluster"""
+    return {
+        "apiVersion": "postgres-operator.crunchydata.com/v1beta1",
+        "kind": "PostgresCluster",
+        "metadata": {
+            "name": "test-cluster",
+            "namespace": "test-ns",
+            "annotations": annotations,
+        },
+    }
+
+
+@pytest.fixture(autouse=True)
+def events():
+    """kopf.info/warn need a running operator: capture them instead"""
+    with (
+        patch("userinit.userinit.kopf.info") as info,
+        patch("userinit.userinit.kopf.warn") as warn,
+    ):
+        yield info, warn
+
+
 @pytest.mark.unit
 class TestPgUserSecretHandler:
     """Test the main Kopf event handler."""
 
     @pytest.mark.asyncio
-    @patch("userinit.userinit.ConnectionManager.get_cluster_annotations")
+    @patch("userinit.userinit.ConnectionManager.get_cluster")
     @patch("userinit.userinit.ConnectionManager.open_cluster_connection")
     @patch("userinit.userinit.DatabaseManager")
     async def test_on_pguser_secret_created_success(
-        self, mock_db_manager_class, mock_open_conn, mock_annotations, valid_secret_body
+        self,
+        mock_db_manager_class,
+        mock_open_conn,
+        mock_annotations,
+        valid_secret_body,
+        events,
     ):
         # No opt-in annotation: only the owner is changed
-        mock_annotations.return_value = {}
+        mock_annotations.return_value = cluster({})
         mock_conn = AsyncMock()
         mock_open_conn.return_value = mock_conn
 
@@ -50,16 +79,22 @@ class TestPgUserSecretHandler:
         mock_db_manager.grant_pgbouncer_connect.assert_not_called()
         mock_db_manager.grant_public_schema.assert_not_called()
         mock_conn.close.assert_called_once()
+        events[0].assert_not_called()
 
     @pytest.mark.asyncio
-    @patch("userinit.userinit.ConnectionManager.get_cluster_annotations")
+    @patch("userinit.userinit.ConnectionManager.get_cluster")
     @patch("userinit.userinit.ConnectionManager.open_cluster_connection")
     @patch("userinit.userinit.DatabaseManager")
     async def test_on_pguser_secret_created_opt_in(
-        self, mock_db_manager_class, mock_open_conn, mock_annotations, valid_secret_body
+        self,
+        mock_db_manager_class,
+        mock_open_conn,
+        mock_annotations,
+        valid_secret_body,
+        events,
     ):
         # The user is in the pgbouncer-connect list and public-schema is "*"
-        mock_annotations.return_value = OPT_IN_ALL
+        mock_annotations.return_value = cluster(OPT_IN_ALL)
         mock_conn = AsyncMock()
         mock_open_conn.return_value = mock_conn
 
@@ -75,19 +110,48 @@ class TestPgUserSecretHandler:
         mock_db_manager.grant_pgbouncer_connect.assert_called_once_with("testdb")
         mock_db_manager.grant_public_schema.assert_called_once_with("testuser")
         assert mock_conn.close.call_count == 2
+        # Both grants ran: one event each, on the PostgresCluster
+        info = events[0]
+        assert [c.kwargs["reason"] for c in info.call_args_list] == ["GrantApplied"] * 2
+        assert info.call_args_list[0].args[0]["kind"] == "PostgresCluster"
+        assert "_crunchypgbouncer" in info.call_args_list[0].kwargs["message"]
+        assert "schema public" in info.call_args_list[1].kwargs["message"]
 
     @pytest.mark.asyncio
-    @patch("userinit.userinit.ConnectionManager.get_cluster_annotations")
+    @patch(
+        "userinit.userinit.ConnectionManager.get_cluster",
+        AsyncMock(return_value=cluster(OPT_IN_ALL)),
+    )
+    @patch("userinit.userinit.ConnectionManager.open_cluster_connection")
+    @patch("userinit.userinit.DatabaseManager")
+    async def test_on_pguser_secret_created_already_granted(
+        self, mock_db_manager_class, mock_open_conn, valid_secret_body, events
+    ):
+        # Selected, but both grants are already in place: no event
+        mock_open_conn.return_value = AsyncMock()
+        mock_db_manager = AsyncMock()
+        mock_db_manager.grant_pgbouncer_connect.return_value = False
+        mock_db_manager.grant_public_schema.return_value = False
+        mock_db_manager_class.return_value = mock_db_manager
+
+        await on_pguser_secret_created(body=valid_secret_body, patch=valid_secret_body)
+
+        events[0].assert_not_called()
+
+    @pytest.mark.asyncio
+    @patch("userinit.userinit.ConnectionManager.get_cluster")
     @patch("userinit.userinit.ConnectionManager.open_cluster_connection")
     @patch("userinit.userinit.DatabaseManager")
     async def test_on_pguser_secret_created_not_selected(
         self, mock_db_manager_class, mock_open_conn, mock_annotations, valid_secret_body
     ):
         # Annotations list other users only
-        mock_annotations.return_value = {
-            "crunchy-userinit.drummyfloyd.github.com/pgbouncer-connect": "other",
-            "crunchy-userinit.drummyfloyd.github.com/public-schema": "other,another",
-        }
+        mock_annotations.return_value = cluster(
+            {
+                "crunchy-userinit.drummyfloyd.github.com/pgbouncer-connect": "other",
+                "crunchy-userinit.drummyfloyd.github.com/public-schema": "other,another",
+            }
+        )
         mock_open_conn.return_value = AsyncMock()
         mock_db_manager = AsyncMock()
         mock_db_manager_class.return_value = mock_db_manager
@@ -146,13 +210,13 @@ class TestPgUserSecretHandler:
 
     @pytest.mark.asyncio
     @patch(
-        "userinit.userinit.ConnectionManager.get_cluster_annotations",
-        AsyncMock(return_value={}),
+        "userinit.userinit.ConnectionManager.get_cluster",
+        AsyncMock(return_value=cluster({})),
     )
     @patch("userinit.userinit.ConnectionManager.open_cluster_connection")
     @patch("userinit.userinit.DatabaseManager")
     async def test_on_pguser_secret_created_change_owner_error(
-        self, mock_db_manager_class, mock_open_conn, valid_secret_body
+        self, mock_db_manager_class, mock_open_conn, valid_secret_body, events
     ):
         # Test when change_owner raises an exception
         mock_conn = AsyncMock()
@@ -169,16 +233,17 @@ class TestPgUserSecretHandler:
 
         # Ensure connection is still closed even on error
         mock_conn.close.assert_called_once()
+        assert events[1].call_args.kwargs["reason"] == "UserInitFailed"
 
     @pytest.mark.asyncio
     @patch(
-        "userinit.userinit.ConnectionManager.get_cluster_annotations",
-        AsyncMock(return_value=OPT_IN_ALL),
+        "userinit.userinit.ConnectionManager.get_cluster",
+        AsyncMock(return_value=cluster(OPT_IN_ALL)),
     )
     @patch("userinit.userinit.ConnectionManager.open_cluster_connection")
     @patch("userinit.userinit.DatabaseManager")
     async def test_on_pguser_secret_created_public_schema_error(
-        self, mock_db_manager_class, mock_open_conn, valid_secret_body
+        self, mock_db_manager_class, mock_open_conn, valid_secret_body, events
     ):
         # Test when grant_public_schema raises an exception
         mock_conn = AsyncMock()
@@ -197,11 +262,12 @@ class TestPgUserSecretHandler:
 
         # Both connections are closed even on error
         assert mock_conn.close.call_count == 2
+        assert "public schema" in events[1].call_args.kwargs["message"]
 
     @pytest.mark.asyncio
     @patch(
-        "userinit.userinit.ConnectionManager.get_cluster_annotations",
-        AsyncMock(return_value={}),
+        "userinit.userinit.ConnectionManager.get_cluster",
+        AsyncMock(return_value=cluster({})),
     )
     @patch("userinit.userinit.ConnectionManager.open_cluster_connection")
     async def test_on_pguser_secret_created_connection_error(
@@ -245,7 +311,8 @@ class TestClusterEventHandler:
         mock_list.assert_called_once_with("test-ns", "test-cluster")
         mock_init.assert_called_once()
         assert mock_init.call_args.args[0].role_name == "testuser"
-        assert mock_init.call_args.args[1] == OPT_IN_ALL
+        # The cluster body itself is passed: annotations and events target
+        assert mock_init.call_args.args[1].metadata.annotations == OPT_IN_ALL
         assert memo["opt_in"] == ("other, testuser", "*")
 
     @pytest.mark.asyncio
@@ -304,3 +371,21 @@ class TestCredentialFreeDiffBaseStorage:
         # Only what the handler reads is tracked: no password, verifier or URI
         assert set(essence["data"]) == {"dbname", "user"}
         assert essence["metadata"]["labels"] == secret._dict["metadata"]["labels"]
+
+
+@pytest.mark.unit
+class TestConfigure:
+    """Test the operator settings."""
+
+    @pytest.mark.asyncio
+    @patch("userinit.userinit.DEV_MODE", True)
+    @patch("userinit.userinit.config.load_kube_config", AsyncMock())
+    async def test_events_posted_as_the_controller(self, env_vars):
+        env_vars(HOSTNAME="crunchy-userinit-abc12")
+        settings = kopf.OperatorSettings()
+
+        await configure(settings=settings)
+
+        assert settings.posting.reporting_component == "crunchy-userinit"
+        assert settings.posting.reporting_instance == "crunchy-userinit-abc12"
+        assert settings.posting.event_name_prefix == "crunchy-userinit-"

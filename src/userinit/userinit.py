@@ -1,15 +1,19 @@
+import os
+
 import kopf
 from kubernetes_asyncio import config
 
 from .config import (
     ANNOTATION_PGBOUNCER_CONNECT,
     ANNOTATION_PUBLIC_SCHEMA,
+    APP_NAME,
     CRUI_DISABLE_CLUSTER_SCOPE,
     DEV_MODE,
     K8S_API_NS,
     K8S_API_NS_DEPRECATED,
     LABELS_MATCH,
     LABELS_MATCH_DEPRECATED,
+    PGBOUNCER_ROLE,
     PGO_GROUP,
     PGO_PLURAL,
     PGO_VERSION,
@@ -47,6 +51,10 @@ async def configure(settings: kopf.OperatorSettings, **_):
     settings.persistence.diffbase_storage = CredentialFreeDiffBaseStorage(
         prefix=K8S_API_NS, key="last-handled-configuration", v1=False
     )
+    # Events show the controller, not the framework ("From" in kubectl describe)
+    settings.posting.reporting_component = APP_NAME
+    settings.posting.reporting_instance = os.environ.get("HOSTNAME", APP_NAME)
+    settings.posting.event_name_prefix = f"{APP_NAME}-"
     if DEV_MODE:
         logger.warning("running in dev mode")
         _ = await config.load_kube_config()
@@ -54,21 +62,24 @@ async def configure(settings: kopf.OperatorSettings, **_):
         _ = config.load_incluster_config()
 
 
-async def init_pguser(
-    pguser_secret: PgUserSecret, annotations: dict[str, str] | None = None
-):
+async def init_pguser(pguser_secret: PgUserSecret, cluster: dict | None = None):
     """Set the database owner, then the opt-in grants selected by the cluster
-    annotations (read from the PostgresCluster when not given)"""
+    annotations (PostgresCluster read when not given).
+
+    Grants actually run, or failing, are reported as events on the PostgresCluster.
+    """
 
     # Skip if this is the superuser itself
     if pguser_secret.role_name == pguser_secret.superuser:
         logger.info(f"skipping {pguser_secret.role_name} as it is the superuser")
         return
 
-    if annotations is None:
-        annotations = await ConnectionManager.get_cluster_annotations(
+    if cluster is None:
+        cluster = await ConnectionManager.get_cluster(
             pguser_secret.cluster_ns, pguser_secret.cluster_name
         )
+    annotations = cluster.get("metadata", {}).get("annotations") or {}
+    db, role = pguser_secret.dbname, pguser_secret.role_name
 
     pgbouncer_connect = selects(
         annotations.get(ANNOTATION_PGBOUNCER_CONNECT), pguser_secret.role_name
@@ -87,13 +98,16 @@ async def init_pguser(
     try:
         db_manager = DatabaseManager(conn)
         await db_manager.change_owner(pguser_secret.dbname, pguser_secret.role_name)
-        if pgbouncer_connect:
-            await db_manager.grant_pgbouncer_connect(pguser_secret.dbname)
+        if pgbouncer_connect and await db_manager.grant_pgbouncer_connect(db):
+            kopf.info(
+                cluster,
+                reason="GrantApplied",
+                message=f"CONNECT on database {db} to {PGBOUNCER_ROLE}",
+            )
     except Exception as e:
-        raise kopf.TemporaryError(
-            f"Failed to set up the database: db={pguser_secret.dbname} owner={pguser_secret.role_name} e={e}",
-            delay=60,
-        )
+        message = f"Failed to set up the database: db={db} owner={role} e={e}"
+        kopf.warn(cluster, reason="UserInitFailed", message=message)
+        raise kopf.TemporaryError(message, delay=60)
     finally:
         _ = await conn.close()
 
@@ -109,12 +123,16 @@ async def init_pguser(
     )
 
     try:
-        await DatabaseManager(db_conn).grant_public_schema(pguser_secret.role_name)
+        if await DatabaseManager(db_conn).grant_public_schema(role):
+            kopf.info(
+                cluster,
+                reason="GrantApplied",
+                message=f"ALL on schema public of database {db} to {role}",
+            )
     except Exception as e:
-        raise kopf.TemporaryError(
-            f"Failed to grant the public schema: db={pguser_secret.dbname} role={pguser_secret.role_name} e={e}",
-            delay=60,
-        )
+        message = f"Failed to grant the public schema: db={db} role={role} e={e}"
+        kopf.warn(cluster, reason="UserInitFailed", message=message)
+        raise kopf.TemporaryError(message, delay=60)
     finally:
         _ = await db_conn.close()
 
@@ -137,10 +155,7 @@ async def on_cluster_event(body: kopf.Body, memo: kopf.Memo, **_):
     logger.info(f"opt-in annotations changed on cluster={name} ns={ns}: {current}")
     try:
         for raw in await ConnectionManager.list_pguser_secrets(ns, name):
-            await init_pguser(
-                PgUserSecret.from_k8s_secret(kopf.Body(raw)),
-                dict(body.metadata.annotations),
-            )
+            await init_pguser(PgUserSecret.from_k8s_secret(kopf.Body(raw)), body)
     # Events are not retried: keep memo unchanged so the next event retries
     except Exception as e:  # noqa: BLE001
         logger.error(f"failed to apply opt-in grants on cluster={name} ns={ns}: {e}")

@@ -55,7 +55,7 @@ class TestDatabaseManager:
         mock_asyncpg_connection.fetchval.return_value = None
 
         db_manager = DatabaseManager(mock_asyncpg_connection)
-        await db_manager.grant_pgbouncer_connect("test_db")
+        assert await db_manager.grant_pgbouncer_connect("test_db") is False
 
         mock_asyncpg_connection.fetchval.assert_called_once()
         mock_asyncpg_connection.execute.assert_not_called()
@@ -68,7 +68,7 @@ class TestDatabaseManager:
         mock_asyncpg_connection.fetchval.side_effect = [1, True]
 
         db_manager = DatabaseManager(mock_asyncpg_connection)
-        await db_manager.grant_pgbouncer_connect("test_db")
+        assert await db_manager.grant_pgbouncer_connect("test_db") is False
 
         mock_asyncpg_connection.execute.assert_not_called()
 
@@ -78,7 +78,7 @@ class TestDatabaseManager:
         mock_asyncpg_connection.fetchval.side_effect = [1, False]
 
         db_manager = DatabaseManager(mock_asyncpg_connection)
-        await db_manager.grant_pgbouncer_connect("test_db")
+        assert await db_manager.grant_pgbouncer_connect("test_db") is True
 
         mock_asyncpg_connection.execute.assert_called_once_with(
             'GRANT CONNECT ON DATABASE "test_db" TO "_crunchypgbouncer"'
@@ -90,7 +90,7 @@ class TestDatabaseManager:
         mock_asyncpg_connection.fetchval.return_value = True
 
         db_manager = DatabaseManager(mock_asyncpg_connection)
-        await db_manager.grant_public_schema("test_user")
+        assert await db_manager.grant_public_schema("test_user") is False
 
         mock_asyncpg_connection.execute.assert_not_called()
 
@@ -100,7 +100,7 @@ class TestDatabaseManager:
         mock_asyncpg_connection.fetchval.return_value = False
 
         db_manager = DatabaseManager(mock_asyncpg_connection)
-        await db_manager.grant_public_schema("test_user")
+        assert await db_manager.grant_public_schema("test_user") is True
 
         mock_asyncpg_connection.execute.assert_called_once_with(
             'GRANT ALL ON SCHEMA public TO "test_user"'
