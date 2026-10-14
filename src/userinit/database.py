@@ -2,7 +2,7 @@ from typing import final
 
 import asyncpg
 
-from .config import logger
+from .config import PGBOUNCER_ROLE, logger
 
 
 @final
@@ -48,3 +48,62 @@ class DatabaseManager:
         logger.info(
             f"database owner changed successfully: db={database_name} new_owner={role_name} old_owner={current_owner}"
         )
+
+    async def grant_pgbouncer_connect(self, database_name: str) -> None:
+        """
+        Grant CONNECT on the database to the PgBouncer auth user.
+
+        PgBouncer runs its auth_query inside the target database, so it fails
+        when an app revokes CONNECT from PUBLIC (e.g. the Nextcloud installer).
+        No-op when PgBouncer is not enabled (role missing) or already granted.
+
+        All exceptions are delegated to the caller.
+        """
+        has_role = await self.connection.fetchval(
+            "SELECT 1 FROM pg_roles WHERE rolname = $1;", PGBOUNCER_ROLE
+        )
+        if not has_role:
+            logger.info(f"role {PGBOUNCER_ROLE} not found. nothing to do.")
+            return
+
+        can_connect = await self.connection.fetchval(
+            "SELECT has_database_privilege($1, $2, 'CONNECT');",
+            PGBOUNCER_ROLE,
+            database_name,
+        )
+        if can_connect:
+            logger.info(
+                f"{PGBOUNCER_ROLE} can already connect to {database_name}. nothing to do."
+            )
+            return
+
+        _ = await self.connection.execute(
+            f'GRANT CONNECT ON DATABASE "{database_name}" TO "{PGBOUNCER_ROLE}"'
+        )
+        logger.info(
+            f"connect granted successfully: db={database_name} role={PGBOUNCER_ROLE}"
+        )
+
+    async def grant_public_schema(self, role_name: str) -> None:
+        """
+        Grant ALL on the public schema to the role.
+
+        Since PostgreSQL 15 the database owner already has it through
+        pg_database_owner, but not on databases created by an older version.
+        Must run on a connection to the target database.
+
+        All exceptions are delegated to the caller.
+        """
+        can_create = await self.connection.fetchval(
+            "SELECT has_schema_privilege($1, 'public', 'CREATE');", role_name
+        )
+        if can_create:
+            logger.info(
+                f"{role_name} can already create in schema public. nothing to do."
+            )
+            return
+
+        _ = await self.connection.execute(
+            f'GRANT ALL ON SCHEMA public TO "{role_name}"'
+        )
+        logger.info(f"public schema granted successfully: role={role_name}")

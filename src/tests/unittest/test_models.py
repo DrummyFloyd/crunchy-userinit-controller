@@ -9,7 +9,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 # Import the models module
-from userinit.models import PgUserSecret, decode_value
+from userinit.models import PgUserSecret, decode_value, selects
 
 
 @pytest.mark.unit
@@ -89,3 +89,24 @@ class TestPgUserSecret:
         assert pguser_secret.secret_name == "custom-cluster-pguser-customuser"
         assert pguser_secret.role_name == "customuser"
         assert pguser_secret.dbname == "customdb"
+
+
+@pytest.mark.unit
+class TestSelects:
+    """Test the opt-in annotation parsing."""
+
+    @pytest.mark.parametrize(
+        "value,expected",
+        [
+            (None, False),
+            ("", False),
+            ("*", True),
+            ("testuser", True),
+            ("other,testuser", True),
+            (" other , testuser ", True),
+            ("other", False),
+            ("testuser2", False),
+        ],
+    )
+    def test_selects(self, value, expected):
+        assert selects(value, "testuser") is expected

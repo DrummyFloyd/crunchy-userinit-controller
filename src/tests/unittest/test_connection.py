@@ -115,7 +115,9 @@ class TestConnectionManager:
 
         assert result == mock_conn
         mock_get_uri.assert_called_once_with("test-ns", "test-cluster", "postgres")
-        mock_connect.assert_called_once_with("postgresql://user:pass@host:5432/db")
+        mock_connect.assert_called_once_with(
+            "postgresql://user:pass@host:5432/db", database=None
+        )
 
     @pytest.mark.asyncio
     @patch("userinit.connections.ConnectionManager.get_superuser_uri")

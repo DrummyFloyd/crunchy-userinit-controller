@@ -83,6 +83,28 @@ It will watch for `pguser` secrets created by the PostgresCluster (due to you ad
 
 When a pguser secret is detected it will open up the secret, pull out the username and dbname, then using superuser creds, it will connect to the database and execute the above `ALTER` statement.
 
+### Optional grants
+
+Two grants are available on demand, through annotations on the `PostgresCluster` itself (not
+`spec.metadata`, which the postgres-operator copies to the Postgres pods and would restart them).
+Each annotation takes a comma-separated list of users, or `*` for all of them. Each grant is skipped
+when already in place, and changing an annotation applies it right away.
+
+| Annotation | Runs | Why |
+| --- | --- | --- |
+| `crunchy-userinit.drummyfloyd.github.com/pgbouncer-connect` | `GRANT CONNECT ON DATABASE "{database_name}" TO "_crunchypgbouncer"` | PgBouncer runs its `auth_query` inside the target database: it fails where `CONNECT` was revoked from `PUBLIC` (the Nextcloud installer does it). Skipped when PgBouncer is not enabled. |
+| `crunchy-userinit.drummyfloyd.github.com/public-schema` | `GRANT ALL ON SCHEMA public TO "{user_name}"` | The database owner has it since PostgreSQL 15, but not on databases created by an older version. |
+
+```yaml
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: "app-db"
+  annotations:
+    crunchy-userinit.drummyfloyd.github.com/pgbouncer-connect: "nextcloud"
+    crunchy-userinit.drummyfloyd.github.com/public-schema: "app1, app2"
+```
+
 ## Why?
 
 🤦

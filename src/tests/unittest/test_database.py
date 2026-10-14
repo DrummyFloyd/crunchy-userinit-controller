@@ -48,3 +48,60 @@ class TestDatabaseManager:
 
         with pytest.raises(Exception, match="DB Error"):
             await db_manager.change_owner("test_db", "new_user")
+
+    @pytest.mark.asyncio
+    async def test_grant_pgbouncer_connect_no_role(self, mock_asyncpg_connection):
+        # PgBouncer not enabled: the role does not exist
+        mock_asyncpg_connection.fetchval.return_value = None
+
+        db_manager = DatabaseManager(mock_asyncpg_connection)
+        await db_manager.grant_pgbouncer_connect("test_db")
+
+        mock_asyncpg_connection.fetchval.assert_called_once()
+        mock_asyncpg_connection.execute.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_grant_pgbouncer_connect_already_granted(
+        self, mock_asyncpg_connection
+    ):
+        # Role exists and can already connect (default PUBLIC CONNECT)
+        mock_asyncpg_connection.fetchval.side_effect = [1, True]
+
+        db_manager = DatabaseManager(mock_asyncpg_connection)
+        await db_manager.grant_pgbouncer_connect("test_db")
+
+        mock_asyncpg_connection.execute.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_grant_pgbouncer_connect_revoked(self, mock_asyncpg_connection):
+        # Role exists but CONNECT was revoked from PUBLIC
+        mock_asyncpg_connection.fetchval.side_effect = [1, False]
+
+        db_manager = DatabaseManager(mock_asyncpg_connection)
+        await db_manager.grant_pgbouncer_connect("test_db")
+
+        mock_asyncpg_connection.execute.assert_called_once_with(
+            'GRANT CONNECT ON DATABASE "test_db" TO "_crunchypgbouncer"'
+        )
+
+    @pytest.mark.asyncio
+    async def test_grant_public_schema_already_granted(self, mock_asyncpg_connection):
+        # PostgreSQL 15+: the owner already has CREATE through pg_database_owner
+        mock_asyncpg_connection.fetchval.return_value = True
+
+        db_manager = DatabaseManager(mock_asyncpg_connection)
+        await db_manager.grant_public_schema("test_user")
+
+        mock_asyncpg_connection.execute.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_grant_public_schema_missing(self, mock_asyncpg_connection):
+        # Database created before PostgreSQL 15
+        mock_asyncpg_connection.fetchval.return_value = False
+
+        db_manager = DatabaseManager(mock_asyncpg_connection)
+        await db_manager.grant_public_schema("test_user")
+
+        mock_asyncpg_connection.execute.assert_called_once_with(
+            'GRANT ALL ON SCHEMA public TO "test_user"'
+        )
