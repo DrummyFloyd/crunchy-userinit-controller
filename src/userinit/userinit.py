@@ -149,7 +149,12 @@ async def on_cluster_event(body: kopf.Body, memo: kopf.Memo, **_):
         body.metadata.annotations.get(a)
         for a in (ANNOTATION_PGBOUNCER_CONNECT, ANNOTATION_PUBLIC_SCHEMA)
     )
-    if memo.get("opt_in") == current:
+    # First sight (controller start, new cluster): only remember the values,
+    # the secret handlers (resume, create) already apply them
+    if "opt_in" not in memo:
+        memo["opt_in"] = current
+        return
+    if memo["opt_in"] == current:
         return
 
     logger.info(f"opt-in annotations changed on cluster={name} ns={ns}: {current}")

@@ -304,7 +304,7 @@ class TestClusterEventHandler:
     async def test_annotations_changed(self, mock_list, mock_init, valid_secret_body):
         # New values: every pguser secret of the cluster is processed again
         mock_list.return_value = [valid_secret_body._dict]
-        memo = kopf.Memo()
+        memo = kopf.Memo(opt_in=(None, None))
 
         await on_cluster_event(body=self.cluster_body(OPT_IN_ALL), memo=memo)
 
@@ -313,6 +313,17 @@ class TestClusterEventHandler:
         assert mock_init.call_args.args[0].role_name == "testuser"
         # The cluster body itself is passed: annotations and events target
         assert mock_init.call_args.args[1].metadata.annotations == OPT_IN_ALL
+        assert memo["opt_in"] == ("other, testuser", "*")
+
+    @pytest.mark.asyncio
+    @patch("userinit.userinit.ConnectionManager.list_pguser_secrets")
+    async def test_first_observation(self, mock_list):
+        # Controller start: values are only remembered, resume already applies them
+        memo = kopf.Memo()
+
+        await on_cluster_event(body=self.cluster_body(OPT_IN_ALL), memo=memo)
+
+        mock_list.assert_not_called()
         assert memo["opt_in"] == ("other, testuser", "*")
 
     @pytest.mark.asyncio
@@ -334,11 +345,12 @@ class TestClusterEventHandler:
         # A failure keeps the memo unchanged, so the next event retries
         mock_list.return_value = [valid_secret_body._dict]
         mock_init.side_effect = kopf.TemporaryError("db down", delay=60)
-        memo = kopf.Memo()
+        memo = kopf.Memo(opt_in=(None, None))
 
         await on_cluster_event(body=self.cluster_body(OPT_IN_ALL), memo=memo)
 
-        assert "opt_in" not in memo
+        mock_init.assert_called_once()
+        assert memo["opt_in"] == (None, None)
 
 
 @pytest.mark.unit
