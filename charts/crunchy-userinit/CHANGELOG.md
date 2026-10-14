@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-1.1.0...chart-1.1.1) (2026-10-14)
+
+
+### Chores
+
+* **main:** release 1.2.1 ([#302](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/302)) ([2d48895](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/2d48895ffbcf24e1a485ed4f9161b88a20f2131f))
+
 ## [1.1.0](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-1.0.6...chart-1.1.0) (2026-10-14)
 
 
