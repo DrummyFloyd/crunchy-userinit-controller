@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-1.0.6...chart-1.1.0) (2026-10-14)
+
+
+### Features
+
+* opt-in pgbouncer CONNECT and public schema grants per user ([#296](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/296)) ([7975d41](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/7975d41971c3fcbb6e8382241beddb47433951b9)), closes [#20](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/20)
+
+
+### Chores
+
+* **main:** release 1.2.0 ([#298](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/298)) ([0b9336f](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/0b9336ff9e7b718a315cdc0ce9a78c713111a202))
+
 ## [1.0.6](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/chart-1.0.5...chart-1.0.6) (2026-06-29)
 
 
