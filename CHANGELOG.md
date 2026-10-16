@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.2.1...v1.2.2) (2026-10-16)
+
+
+### Bug Fixes
+
+* **deps:** update python ([#279](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/279)) ([5e64d40](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/5e64d404859521cd8743e8e66b2b748a9c2c57a7))
+
 ## [1.2.1](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.2.0...v1.2.1) (2026-10-14)
 
 
