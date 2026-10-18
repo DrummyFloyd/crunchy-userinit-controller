@@ -96,7 +96,7 @@ when already in place, and changing an annotation applies it right away.
 | `crunchy-userinit.drummyfloyd.github.com/public-schema` | `GRANT ALL ON SCHEMA public TO "{user_name}"` | The database owner has it since PostgreSQL 15, but not on databases created by an older version. |
 
 ```yaml
-apiVersion: postgres-operator.crunchydata.com/v1beta1
+apiVersion: postgres-operator.crunchydata.com/v1
 kind: PostgresCluster
 metadata:
   name: "app-db"
@@ -121,7 +121,7 @@ You must label annotate your `PostgresCluster` so the `userinit-controller` can 
 
 ```yaml
 ---
-apiVersion: postgres-operator.crunchydata.com/v1beta1
+apiVersion: postgres-operator.crunchydata.com/v1
 kind: PostgresCluster
 metadata:
   name: "app-db"
@@ -160,6 +160,18 @@ spec:
 ### The Chart
 
 The chart is pretty simple and is in [charts](/charts/crunchy-userinit/) directory.
+
+### PGO 5.x
+
+The controller uses the `postgres-operator.crunchydata.com/v1` API, available since
+Crunchy Postgres for Kubernetes 6.0. On PGO 5.x, which only serves `v1beta1`, set
+`CRUI_PGO_VERSION`:
+
+```yaml
+extraEnv:
+  - name: CRUI_PGO_VERSION
+    value: v1beta1
+```
 
 [crunchy]: https://access.crunchydata.com/documentation/postgres-operator/latest/
 

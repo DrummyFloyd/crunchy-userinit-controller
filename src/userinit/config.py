@@ -18,7 +18,8 @@ ANNOTATION_PUBLIC_SCHEMA = f"{K8S_API_NS}/public-schema"
 # PgBouncer auth_user created by the postgres-operator
 PGBOUNCER_ROLE = "_crunchypgbouncer"
 PGO_GROUP = "postgres-operator.crunchydata.com"
-PGO_VERSION = "v1beta1"
+# v1 since CPK 6.0; set "v1beta1" for PGO 5.x
+PGO_VERSION = os.environ.get("CRUI_PGO_VERSION", "v1")
 PGO_PLURAL = "postgresclusters"
 LABELS_MATCH = {
     "postgres-operator.crunchydata.com/role": "pguser",

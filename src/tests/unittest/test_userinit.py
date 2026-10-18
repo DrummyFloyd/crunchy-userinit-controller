@@ -27,7 +27,7 @@ OPT_IN_ALL = {
 def cluster(annotations: dict) -> dict:
     """PostgresCluster as returned by ConnectionManager.get_cluster"""
     return {
-        "apiVersion": "postgres-operator.crunchydata.com/v1beta1",
+        "apiVersion": "postgres-operator.crunchydata.com/v1",
         "kind": "PostgresCluster",
         "metadata": {
             "name": "test-cluster",

@@ -41,7 +41,7 @@ def psql(sql: str, dbname: str = "postgres") -> str:
 def annotate_cluster(annotations: dict) -> None:
     _ = client.CustomObjectsApi().patch_namespaced_custom_object(
         "postgres-operator.crunchydata.com",
-        "v1beta1",
+        "v1",
         YAML_FILE,
         "postgresclusters",
         YAML_FILE,
