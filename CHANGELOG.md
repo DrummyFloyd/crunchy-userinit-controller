@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.3](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.2.2...v1.2.3) (2026-10-31)
+
+
+### Bug Fixes
+
+* **deps:** update dependency kopf to v1.45.2 ([#318](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/318)) ([97425ec](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/97425ecd1bcb7dbbabc4dfce8e0afc398b4e1219))
+
 ## [1.2.2](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.2.1...v1.2.2) (2026-10-18)
 
 
