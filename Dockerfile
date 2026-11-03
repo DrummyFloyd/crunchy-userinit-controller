@@ -1,5 +1,5 @@
 # Use a Python image with uv pre-installed
-FROM ghcr.io/astral-sh/uv:python3.15-alpine@sha256:4de1eb2baffd7a44903a53b6cb112b2538232d56287bc37d18b66ae1f17108d4
+FROM ghcr.io/astral-sh/uv:python3.15-alpine@sha256:f008ab85c84befffaaa8cbde7eb2b749331769df4e18be766269d0c4904deb40
 
 WORKDIR /app
 
