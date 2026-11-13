@@ -3,7 +3,7 @@ name: crunchy-userinit-controller
 description: Installs crunchy-userinit-controller
 type: application
 version: 1.1.2
-appVersion: 1.2.2
+appVersion: 1.2.3
 maintainers:
   - name: drummyfloyd
     email: false.drummyfloyd@gmail.com
