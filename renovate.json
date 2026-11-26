@@ -15,7 +15,7 @@
       "platformAutomerge": true
     },
     {
-      "matchManagers": ["pep621", "uv", "pyenv"],
+      "matchManagers": ["pep621", "pyenv"],
       "groupName": "python"
     },
     {
