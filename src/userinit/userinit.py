@@ -4,8 +4,6 @@ import kopf
 from kubernetes_asyncio import config
 
 from .config import (
-    ANNOTATION_PGBOUNCER_CONNECT,
-    ANNOTATION_PUBLIC_SCHEMA,
     APP_NAME,
     CRUI_DISABLE_CLUSTER_SCOPE,
     DEV_MODE,
@@ -13,7 +11,6 @@ from .config import (
     K8S_API_NS_DEPRECATED,
     LABELS_MATCH,
     LABELS_MATCH_DEPRECATED,
-    PGBOUNCER_ROLE,
     PGO_GROUP,
     PGO_PLURAL,
     PGO_VERSION,
@@ -21,6 +18,7 @@ from .config import (
 )
 from .connections import ConnectionManager
 from .database import DatabaseManager
+from .fixes import FIXES
 from .models import PgUserSecret, selects
 
 # The only secret data the handler reads: changes to them must still trigger it
@@ -81,12 +79,8 @@ async def init_pguser(pguser_secret: PgUserSecret, cluster: dict | None = None):
     annotations = cluster.get("metadata", {}).get("annotations") or {}
     db, role = pguser_secret.dbname, pguser_secret.role_name
 
-    pgbouncer_connect = selects(
-        annotations.get(ANNOTATION_PGBOUNCER_CONNECT), pguser_secret.role_name
-    )
-    public_schema = selects(
-        annotations.get(ANNOTATION_PUBLIC_SCHEMA), pguser_secret.role_name
-    )
+    selected = [f for f in FIXES if selects(annotations.get(f.annotation), role)]
+    db_fixes = [f for f in selected if f.scope == "database"]
 
     # Get database connection and change ownership
     conn = await ConnectionManager.open_cluster_connection(
@@ -96,45 +90,50 @@ async def init_pguser(pguser_secret: PgUserSecret, cluster: dict | None = None):
     )
 
     try:
-        db_manager = DatabaseManager(conn)
-        await db_manager.change_owner(pguser_secret.dbname, pguser_secret.role_name)
-        if pgbouncer_connect and await db_manager.grant_pgbouncer_connect(db):
-            kopf.info(
-                cluster,
-                reason="GrantApplied",
-                message=f"CONNECT on database {db} to {PGBOUNCER_ROLE}",
-            )
-    except Exception as e:
-        message = f"Failed to set up the database: db={db} owner={role} e={e}"
-        kopf.warn(cluster, reason="UserInitFailed", message=message)
-        raise kopf.TemporaryError(message, delay=60)
+        try:
+            await DatabaseManager(conn).change_owner(db, role)
+        except Exception as e:
+            message = f"Failed to set up the database: db={db} owner={role} e={e}"
+            kopf.warn(cluster, reason="UserInitFailed", message=message)
+            raise kopf.TemporaryError(message, delay=60)
+        await apply_fixes(
+            cluster, conn, pguser_secret, [f for f in selected if f.scope == "cluster"]
+        )
     finally:
         _ = await conn.close()
 
-    if not public_schema:
+    if not db_fixes:
         return
 
-    # Schema privileges are per database: connect to the target one
+    # Schema and extension changes are per database: connect to the target one
     db_conn = await ConnectionManager.open_cluster_connection(
         pguser_secret.cluster_ns,
         pguser_secret.cluster_name,
         pguser_secret.superuser,
-        database=pguser_secret.dbname,
+        database=db,
     )
 
     try:
-        if await DatabaseManager(db_conn).grant_public_schema(role):
-            kopf.info(
-                cluster,
-                reason="GrantApplied",
-                message=f"ALL on schema public of database {db} to {role}",
-            )
-    except Exception as e:
-        message = f"Failed to grant the public schema: db={db} role={role} e={e}"
-        kopf.warn(cluster, reason="UserInitFailed", message=message)
-        raise kopf.TemporaryError(message, delay=60)
+        await apply_fixes(cluster, db_conn, pguser_secret, db_fixes)
     finally:
         _ = await db_conn.close()
+
+
+async def apply_fixes(cluster, conn, pguser_secret: PgUserSecret, fixes) -> None:
+    """Apply the fixes on the connection; each change is reported as an event."""
+    db_manager = DatabaseManager(conn)
+    for fix in fixes:
+        try:
+            changed = await fix.apply(db_manager, pguser_secret)
+        except Exception as e:
+            message = (
+                f"Failed to apply {fix.name}: db={pguser_secret.dbname}"
+                f" role={pguser_secret.role_name} e={e}"
+            )
+            kopf.warn(cluster, reason="UserInitFailed", message=message)
+            raise kopf.TemporaryError(message, delay=60)
+        if changed:
+            kopf.info(cluster, reason="GrantApplied", message=fix.event(pguser_secret))
 
 
 @kopf.on.event(PGO_GROUP, PGO_VERSION, PGO_PLURAL, id="opt-in-crui")
@@ -145,10 +144,7 @@ async def on_cluster_event(body: kopf.Body, memo: kopf.Memo, **_):
     in the per-object memo.
     """
     name, ns = body.metadata.name, body.metadata.namespace
-    current = tuple(
-        body.metadata.annotations.get(a)
-        for a in (ANNOTATION_PGBOUNCER_CONNECT, ANNOTATION_PUBLIC_SCHEMA)
-    )
+    current = tuple(body.metadata.annotations.get(f.annotation) for f in FIXES)
     # First sight (controller start, new cluster): only remember the values,
     # the secret handlers (resume, create) already apply them
     if "opt_in" not in memo:

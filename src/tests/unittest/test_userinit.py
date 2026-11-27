@@ -254,7 +254,7 @@ class TestPgUserSecretHandler:
         mock_db_manager_class.return_value = mock_db_manager
 
         with pytest.raises(
-            kopf.TemporaryError, match="Failed to grant the public schema"
+            kopf.TemporaryError, match="Failed to apply public-schema"
         ):
             await on_pguser_secret_created(
                 body=valid_secret_body, patch=valid_secret_body
@@ -262,7 +262,7 @@ class TestPgUserSecretHandler:
 
         # Both connections are closed even on error
         assert mock_conn.close.call_count == 2
-        assert "public schema" in events[1].call_args.kwargs["message"]
+        assert "public-schema" in events[1].call_args.kwargs["message"]
 
     @pytest.mark.asyncio
     @patch(
