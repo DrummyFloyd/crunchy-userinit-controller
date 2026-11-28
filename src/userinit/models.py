@@ -14,14 +14,15 @@ class PgUserSecret:
         cluster_name: str,
         cluster_ns: str,
         superuser: str,
-        dbname: str,
+        dbname: str | None,
         role_name: str,
     ):
         self.secret_name: str = secret_name
         self.cluster_name: str = cluster_name
         self.cluster_ns: str = cluster_ns
         self.superuser: str = superuser
-        self.dbname: str = dbname
+        # None for a PGO user declared without databases
+        self.dbname: str | None = dbname
         self.role_name: str = role_name
 
     @classmethod
@@ -45,11 +46,10 @@ class PgUserSecret:
         dbname = decode_value(data.get("dbname"))
         role_name = decode_value(data.get("user"))
 
-        err_msg = f"Could not parse %s from secret_name={secret_name}"
-        if not dbname:
-            raise kopf.TemporaryError(err_msg % "dbname", delay=30)
         if not role_name:
-            raise kopf.TemporaryError(err_msg % "role_name", delay=30)
+            raise kopf.TemporaryError(
+                f"Could not parse role_name from secret_name={secret_name}", delay=30
+            )
 
         return cls(secret_name, cluster_name, cluster_ns, superuser, dbname, role_name)
 
