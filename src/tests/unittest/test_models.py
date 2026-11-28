@@ -65,11 +65,13 @@ class TestPgUserSecret:
             PgUserSecret.from_k8s_secret(valid_secret_body)
 
     def test_from_k8s_secret_missing_dbname(self, valid_secret_body):
-        # Test when dbname is missing from secret data
+        # PGO user declared without databases: the secret has no dbname
         del valid_secret_body.data["dbname"]
 
-        with pytest.raises(kopf.TemporaryError, match="Could not parse dbname"):
-            PgUserSecret.from_k8s_secret(valid_secret_body)
+        pguser_secret = PgUserSecret.from_k8s_secret(valid_secret_body)
+
+        assert pguser_secret.dbname is None
+        assert pguser_secret.role_name == "testuser"
 
     def test_from_k8s_secret_missing_user(self, valid_secret_body):
         # Test when user is missing from secret data

@@ -178,13 +178,18 @@ class TestPgUserSecretHandler:
 
     @pytest.mark.asyncio
     async def test_on_pguser_secret_created_missing_dbname(self, valid_secret_body):
-        # Test when dbname is missing from secret data
+        # PGO user declared without databases: skipped, nothing to own
         del valid_secret_body.data["dbname"]
 
-        with pytest.raises(kopf.TemporaryError, match="Could not parse dbname"):
+        with (
+            patch("userinit.userinit.ConnectionManager") as mock_conn_manager,
+            patch("userinit.userinit.DatabaseManager") as mock_db_manager_class,
+        ):
             await on_pguser_secret_created(
                 body=valid_secret_body, patch=valid_secret_body
             )
+            mock_conn_manager.get_cluster.assert_not_called()
+            mock_db_manager_class.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_on_pguser_secret_created_missing_user(self, valid_secret_body):
@@ -253,9 +258,7 @@ class TestPgUserSecretHandler:
         mock_db_manager.grant_public_schema.side_effect = Exception("Database error")
         mock_db_manager_class.return_value = mock_db_manager
 
-        with pytest.raises(
-            kopf.TemporaryError, match="Failed to apply public-schema"
-        ):
+        with pytest.raises(kopf.TemporaryError, match="Failed to apply public-schema"):
             await on_pguser_secret_created(
                 body=valid_secret_body, patch=valid_secret_body
             )

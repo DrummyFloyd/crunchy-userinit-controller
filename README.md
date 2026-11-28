@@ -83,6 +83,8 @@ It will watch for `pguser` secrets created by the PostgresCluster (due to you ad
 
 When a pguser secret is detected it will open up the secret, pull out the username and dbname, then using superuser creds, it will connect to the database and execute the above `ALTER` statement.
 
+Users declared without `databases` (for example a restricted runtime role) get a secret without `dbname`: there is no database to own, so the controller skips them, like the superuser.
+
 ### Optional grants
 
 Two grants are available on demand, through annotations on the `PostgresCluster` itself (not

@@ -72,6 +72,11 @@ async def init_pguser(pguser_secret: PgUserSecret, cluster: dict | None = None):
         logger.info(f"skipping {pguser_secret.role_name} as it is the superuser")
         return
 
+    # PGO user declared without databases: no database to own
+    if not pguser_secret.dbname:
+        logger.info(f"skipping {pguser_secret.role_name} as it has no database")
+        return
+
     if cluster is None:
         cluster = await ConnectionManager.get_cluster(
             pguser_secret.cluster_ns, pguser_secret.cluster_name
