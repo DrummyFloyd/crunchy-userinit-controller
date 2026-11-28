@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.2.3...v1.2.4) (2026-11-28)
+
+
+### Bug Fixes
+
+* skip pguser secrets without a database ([#350](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/350)) ([eb74816](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/eb7481608420f9b1691f6dd773d7b45cd52b6bd1))
+
 ## [1.2.3](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.2.2...v1.2.3) (2026-11-28)
 
 
