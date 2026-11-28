@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.3](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.2.2...v1.2.3) (2026-11-28)
+
+
+### Bug Fixes
+
+* **deps:** update dependency kopf to v1.45.2 ([#318](https://github.com/DrummyFloyd/crunchy-userinit-controller/issues/318)) ([97425ec](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/97425ecd1bcb7dbbabc4dfce8e0afc398b4e1219))
+* **renovate:** remove invalid uv manager from packageRules ([1ae5f28](https://github.com/DrummyFloyd/crunchy-userinit-controller/commit/1ae5f28a8967a0dff59bb9b1f7e1756d20a61ff7))
+
 ## [1.2.2](https://github.com/DrummyFloyd/crunchy-userinit-controller/compare/v1.2.1...v1.2.2) (2026-10-18)
 
 
